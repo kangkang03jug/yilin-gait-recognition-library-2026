@@ -1,0 +1,10 @@
+{
+  "date": "2026-09-17",
+  "recommendations": [
+    {
+      "paper_id": "gaitllm-bridging-gait-recognition-and-large-language-models",
+      "primary": true,
+      "run_type": "scheduled"
+    }
+  ]
+}
