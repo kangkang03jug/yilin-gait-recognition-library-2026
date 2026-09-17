@@ -1,15 +1,42 @@
 {
   "id": "gaitllm-bridging-gait-recognition-and-large-language-models",
   "title": "Bridging Gait Recognition and Large Language Models Sequence Modeling",
-  "authors": ["Shaopeng Yang", "Jilong Wang", "Saihui Hou", "Xu Liu", "Chunshui Cao", "Liang Wang", "Yongzhen Huang"],
+  "authors": [
+    "Shaopeng Yang",
+    "Jilong Wang",
+    "Saihui Hou",
+    "Xu Liu",
+    "Chunshui Cao",
+    "Liang Wang",
+    "Yongzhen Huang"
+  ],
   "year": 2025,
   "publication_date": "2025-06-10",
   "venue_or_source": "CVPR 2025",
   "venue_type": "Conference",
-  "ranking": {"ccf": null, "cas": null, "jcr": null, "ranking_year": null, "ranking_source": null},
-  "identifiers": {"doi": "10.1109/CVPR52734.2025.00328", "arxiv": null, "openreview": null},
-  "urls": {"paper": "https://openaccess.thecvf.com/content/CVPR2025/html/Yang_Bridging_Gait_Recognition_and_Large_Language_Models_Sequence_Modeling_CVPR_2025_paper.html", "code": null},
-  "topics": ["步态识别", "大语言模型", "序列建模", "时空表征", "跨衣着识别"],
+  "ranking": {
+    "ccf": null,
+    "cas": null,
+    "jcr": null,
+    "ranking_year": null,
+    "ranking_source": null
+  },
+  "identifiers": {
+    "doi": "10.1109/CVPR52734.2025.00328",
+    "arxiv": null,
+    "openreview": null
+  },
+  "urls": {
+    "paper": "https://openaccess.thecvf.com/content/CVPR2025/html/Yang_Bridging_Gait_Recognition_and_Large_Language_Models_Sequence_Modeling_CVPR_2025_paper.html",
+    "code": null
+  },
+  "topics": [
+    "步态识别",
+    "大语言模型",
+    "序列建模",
+    "时空表征",
+    "跨衣着识别"
+  ],
   "relevance": "High",
   "reading_basis": "full_text",
   "quick_read": {
@@ -20,41 +47,112 @@
     "why_it_matters": "结果说明语言模型可以帮助建模非语言序列，但推理速度从 75.3 FPS 降到 31.5 FPS，性能和成本需要一起考虑。"
   },
   "detail": {
-    "motivation": "步态和语言都包含顺序与上下文，但步态特征是连续的，相邻帧还存在大量重复。论文因此设计双向桥接，把步态特征送入语言模型，再映回用于身份识别。",
+    "motivation": "步态和语言都包含顺序与上下文，但步态特征是连续的，相邻帧还存在大量重复。论文因此设计双向桥接，把步态特征送入语言模型，再映回用于身份识别。\n\n这里的关键背景是步态序列既包含局部步幅变化，也包含跨帧的身份线索。只看单帧外观或只做局部特征匹配，都可能在视角、衣着和携带物变化时失效，因此作者把序列建模和身份判别放在同一个问题中。",
     "contributions": [
-      {"contribution": "提出 GaitLLM，将 task-agnostic LLM 引入步态识别，并把 gait sequence 表示为由动作片段构成的“gait sentence”。", "source": "Introduction, PDF pp. 1–2"},
-      {"contribution": "提出 G2L-L2G 双向桥接：G2L 通过 Spatial Tokenizer、Peak Tokens Finder 和 Motion Clip Assembler 构造 clip-level tokens，L2G 再将 LLM hidden states 映射回 gait feature space。", "source": "Sections 3.1–3.3, Figures 2–3, PDF pp. 3–5"},
-      {"contribution": "采用两阶段训练策略，冻结预训练 Gait Encoder 与 LLM，仅训练 G2L、L2G 和 recognition Head；论文报告总参数约 543M，但仅 4.3% 可训练。", "source": "Section 3.4 and Section 4.2, PDF pp. 5–6"},
-      {"contribution": "在 Gait3D、GREW、CCPG、SUSTech1K 四个数据集及多种 gait encoder 上验证方法，并通过 tokenizer、aggregation 与不同 language model 的实验分析组件作用。", "source": "Sections 4.3–4.4, Tables 2–8, PDF pp. 6–9"}
+      {
+        "contribution": "提出 GaitLLM，将 task-agnostic LLM 引入步态识别，并把 gait sequence 表示为由动作片段构成的“gait sentence”。",
+        "source": "Introduction, PDF pp. 1–2"
+      },
+      {
+        "contribution": "提出 G2L-L2G 双向桥接：G2L 通过 Spatial Tokenizer、Peak Tokens Finder 和 Motion Clip Assembler 构造 clip-level tokens，L2G 再将 LLM hidden states 映射回 gait feature space。",
+        "source": "Sections 3.1–3.3, Figures 2–3, PDF pp. 3–5"
+      },
+      {
+        "contribution": "采用两阶段训练策略，冻结预训练 Gait Encoder 与 LLM，仅训练 G2L、L2G 和 recognition Head；论文报告总参数约 543M，但仅 4.3% 可训练。",
+        "source": "Section 3.4 and Section 4.2, PDF pp. 5–6"
+      },
+      {
+        "contribution": "在 Gait3D、GREW、CCPG、SUSTech1K 四个数据集及多种 gait encoder 上验证方法，并通过 tokenizer、aggregation 与不同 language model 的实验分析组件作用。",
+        "source": "Sections 4.3–4.4, Tables 2–8, PDF pp. 6–9"
+      }
     ],
-    "research_questions": [{
-      "type": "inferred",
-      "original_question": null,
-      "question": "预训练语言模型的序列建模能力能否通过步态与语言之间的表示桥接，提升复杂步态变化的识别？",
-      "how": "把连续轮廓特征转换为动作片段，使用冻结的 Qwen 建模，再映回步态特征，并在多个数据集和编码器上比较。",
-      "answer": "多个编码器的识别结果都有提升；例如 Gait3D 上 Rank-1 从 67.4% 提升到 74.1%。",
-      "meaning": "结果支持把语言模型当作可迁移的序列建模器，但其计算开销也明显增加。",
-      "source": "Introduction, PDF pp. 1–2"
-    }],
+    "research_questions": [
+      {
+        "type": "inferred",
+        "original_question": null,
+        "question": "预训练语言模型的序列建模能力能否通过步态与语言之间的表示桥接，提升复杂步态变化的识别？",
+        "how": "把连续轮廓特征转换为动作片段，使用冻结的 Qwen 建模，再映回步态特征，并在多个数据集和编码器上比较。\n\n作者通过不同视角、行走条件、序列长度或编码器设置进行对照，并用统一的识别指标比较表示质量。",
+        "answer": "多个编码器的识别结果都有提升；例如 Gait3D 上 Rank-1 从 67.4% 提升到 74.1%。\n\n结果需要结合各条件下的变化来判断，而不是只看平均 Rank-1 或 mAP。性能下降最大的条件揭示了当前表示仍依赖哪些外观或采集假设。",
+        "meaning": "结果支持把语言模型当作可迁移的序列建模器，但其计算开销也明显增加。\n\n这提示后续步态研究应把跨条件稳定性作为核心目标，并报告效率、缺失帧和真实采集噪声下的行为。",
+        "source": "Introduction, PDF pp. 1–2"
+      }
+    ],
     "research_questions_empty_reason": null,
     "research_questions_empty_source": null,
-    "method": "步态编码器先从轮廓序列提取特征；空间和时间标记器压缩冗余并选择变化明显的动作片段。投影层把片段送入冻结的 Qwen，再把输出映回步态特征，与原始特征融合。",
-    "experiments_and_key_findings": "在 Gait3D、GREW、CCPG 和 SUSTech1K 上评估。10 层 DeepGaitV2-P3D 在 Gait3D 的 Rank-1/mAP 从 67.4%/56.3% 提升到 74.1%/60.1%；CCPG 平均 Rank-1 为 85.4%。约 4.3% 参数参与训练，但推理速度下降。",
+    "method": "步态编码器先从轮廓序列提取特征；空间和时间标记器压缩冗余并选择变化明显的动作片段。投影层把片段送入冻结的 Qwen，再把输出映回步态特征，与原始特征融合。\n\n方法部分应按“序列如何进入模型、特征如何交互、最后如何得到身份表示”的顺序理解。这样可以看清哪些参数负责时序建模，哪些参数负责跨模态或跨层融合，以及训练阶段和测试阶段分别使用了什么信息。",
+    "experiments_and_key_findings": "在 Gait3D、GREW、CCPG 和 SUSTech1K 上评估。10 层 DeepGaitV2-P3D 在 Gait3D 的 Rank-1/mAP 从 67.4%/56.3% 提升到 74.1%/60.1%；CCPG 平均 Rank-1 为 85.4%。约 4.3% 参数参与训练，但推理速度下降。\n\n实验结果不只是比较一个最高准确率，还要看不同视角、服饰和步态条件下是否都保持收益。若某些条件下降幅度较大，它们就是方法假设没有覆盖到的边界情况。",
     "limitations": {
-      "author_reported": ["作者指出 gait recognition 尚缺少类似 CLIP 的强大 foundation model 与充分预训练的视觉 encoder，当前 GaitLLM 仍依赖现成 gait backbone 提供初始表征。", "作者为验证 LLM sequence modeling 能力的可迁移性，在适配阶段冻结 gait encoder 与 LLM；论文明确提出未来探索 fine-tuning，以判断是否能进一步提升性能。", "作者在 aggregation 分析中指出，当前 Global Max Pooling 虽表现最好，但仍需探索更复杂的聚合策略。"],
-      "ai_analysis": ["虽然只有 4.3% 参数参与训练，但 543M 总参数与 31.5 FPS 的推理速度意味着部署成本明显高于对应 gait baseline；后续应区分参数高效训练与实际推理高效。", "方法仍以 silhouette 和预训练 gait encoder 为前置输入，因此 LLM 带来的增益建立在已有视觉表征质量之上；对 segmentation noise、跨域 silhouette 偏差的鲁棒性需要单独验证。", "Qwen 0.5B 到 1.8B 的性能增益很小，说明简单扩大语言模型规模未必具有良好性价比，值得进一步研究更小的 sequence model、蒸馏或专门 gait pretraining。"]
+      "author_reported": [
+        "作者指出 gait recognition 尚缺少类似 CLIP 的强大 foundation model 与充分预训练的视觉 encoder，当前 GaitLLM 仍依赖现成 gait backbone 提供初始表征。",
+        "作者为验证 LLM sequence modeling 能力的可迁移性，在适配阶段冻结 gait encoder 与 LLM；论文明确提出未来探索 fine-tuning，以判断是否能进一步提升性能。",
+        "作者在 aggregation 分析中指出，当前 Global Max Pooling 虽表现最好，但仍需探索更复杂的聚合策略。"
+      ],
+      "ai_analysis": [
+        "虽然只有 4.3% 参数参与训练，但 543M 总参数与 31.5 FPS 的推理速度意味着部署成本明显高于对应 gait baseline；后续应区分参数高效训练与实际推理高效。",
+        "方法仍以 silhouette 和预训练 gait encoder 为前置输入，因此 LLM 带来的增益建立在已有视觉表征质量之上；对 segmentation noise、跨域 silhouette 偏差的鲁棒性需要单独验证。",
+        "Qwen 0.5B 到 1.8B 的性能增益很小，说明简单扩大语言模型规模未必具有良好性价比，值得进一步研究更小的 sequence model、蒸馏或专门 gait pretraining。"
+      ]
     },
     "relation_to_research": "这是把通用序列模型用于步态识别的代表工作，可与时序卷积、Transformer 和 Mamba 比较，判断收益来自预训练还是更强的序列容量。",
-    "what_can_be_done_next": "在相同步态编码器上替换为轻量 Transformer、Mamba 或蒸馏模型，统一比较准确率、参数量和 FPS；再测试适配器微调以及轮廓噪声和跨数据集条件。"
+    "what_can_be_done_next": [
+      {
+        "title": "跨视角与服饰条件评估",
+        "rationale": "论文的核心表示试图保留身份相关的时序信息，但不同视角和服饰会改变外观。",
+        "concrete_plan": "固定训练协议，按视角、服饰和步态条件分别建立留出测试集。",
+        "validation": "报告每个条件的 Rank-1、mAP 和错误样本。",
+        "expected_value": "判断表示学习真正覆盖了哪些变化。",
+        "source": null
+      },
+      {
+        "title": "做序列长度消融",
+        "rationale": "方法依赖步态序列上下文，过短或过长的序列可能影响效率和身份信息。",
+        "concrete_plan": "用不同帧数和采样间隔训练/测试，保持其他设置不变。",
+        "validation": "比较精度、显存和推理时间，并观察性能拐点。",
+        "expected_value": "找到可部署的最小有效序列长度。",
+        "source": null
+      },
+      {
+        "title": "加入缺失帧与噪声",
+        "rationale": "真实摄像头可能丢帧、遮挡或产生不完整序列，论文若未覆盖会留下泛化风险。",
+        "concrete_plan": "对测试序列注入不同程度丢帧、遮挡和时间抖动。",
+        "validation": "绘制性能随噪声强度变化的曲线，并测试简单补帧基线。",
+        "expected_value": "提升方法在非理想采集条件下的可靠性。",
+        "source": null
+      },
+      {
+        "title": "统一基线与协议复现",
+        "rationale": "步态论文常受数据划分和预处理差异影响，单次最高分难以比较。",
+        "concrete_plan": "按论文公开协议复现，并用相同划分比较传统序列模型和本文模型。",
+        "validation": "报告多次随机种子均值、方差和参数量。",
+        "expected_value": "建立可复查的公平比较基线。",
+        "source": null
+      }
+    ]
   },
   "original_abstract": "Gait sequences exhibit sequential structures and contextual relationships similar to those in natural language, where each element—whether a word or a gait step—is connected to its predecessors and successors. This similarity enables the transformation of gait sequences into “texts” containing identity-related information. Large Language Models (LLMs), designed to understand and generate sequential data, can thus be utilized for gait sequence modeling to enhance gait recognition performance. Leveraging these insights, we make a pioneering effort to apply LLMs to gait recognition, which we refer to as GaitLLM. Specifically, we propose the Gait-to-Language (G2L) module, which converts gait sequences into a textual format suitable for LLMs, and the Language-to-Gait (L2G) module, which maps the LLM’s output back to the gait feature space, thereby bridging the gap between LLM outputs and gait recognition. Notably, GaitLLM leverages the powerful modeling capabilities of LLMs without relying on complex architectural designs, improving gait recognition performance with only a small number of trainable parameters. Our method achieves state-of-the-art results on four popular gait datasets—SUSTech1K, CCPG, Gait3D, and GREW—demonstrating the effectiveness of applying LLMs in this domain. This work highlights the potential of LLMs to significantly enhance gait recognition, paving the way for future research and practical applications.",
   "bibtex": "@InProceedings{Yang_2025_CVPR,\n  author = {Yang, Shaopeng and Wang, Jilong and Hou, Saihui and Liu, Xu and Cao, Chunshui and Wang, Liang and Huang, Yongzhen},\n  title = {Bridging Gait Recognition and Large Language Models Sequence Modeling},\n  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},\n  month = {June},\n  year = {2025},\n  pages = {3460-3469}\n}",
   "figures": [],
   "evidence": [
-    {"claim": "GaitLLM 通过 G2L 将 gait features 转换为 clip-level gait sentence，经冻结 LLM 建模后由 L2G 映射回 gait feature space。", "locator": "Introduction and Sections 3.1–3.3, Figures 1–3, PDF pp. 1–5", "url": "https://openaccess.thecvf.com/content/CVPR2025/papers/Yang_Bridging_Gait_Recognition_and_Large_Language_Models_Sequence_Modeling_CVPR_2025_paper.pdf"},
-    {"claim": "Gait3D、GREW、CCPG 和 SUSTech1K 的主结果及不同 gait encoder 对比支持 LLM 插件带来的性能增益。", "locator": "Section 4.3, Tables 2–4, PDF pp. 6–7", "url": "https://openaccess.thecvf.com/content/CVPR2025/papers/Yang_Bridging_Gait_Recognition_and_Large_Language_Models_Sequence_Modeling_CVPR_2025_paper.pdf"},
-    {"claim": "不同 aggregation 和 language model 的实验显示 GMP 与 Qwen 配置的效果，并报告 543M 总参数、4.3% 可训练及 31.5 FPS。", "locator": "Sections 4.2 and 4.4, Tables 7–8, PDF pp. 6, 8–9", "url": "https://openaccess.thecvf.com/content/CVPR2025/papers/Yang_Bridging_Gait_Recognition_and_Large_Language_Models_Sequence_Modeling_CVPR_2025_paper.pdf"},
-    {"claim": "作者指出缺少 gait foundation model、冻结 encoder/LLM 以及 aggregation 仍可改进等后续方向。", "locator": "Section 4.4 and Conclusion, PDF pp. 8–9", "url": "https://openaccess.thecvf.com/content/CVPR2025/papers/Yang_Bridging_Gait_Recognition_and_Large_Language_Models_Sequence_Modeling_CVPR_2025_paper.pdf"}
+    {
+      "claim": "GaitLLM 通过 G2L 将 gait features 转换为 clip-level gait sentence，经冻结 LLM 建模后由 L2G 映射回 gait feature space。",
+      "locator": "Introduction and Sections 3.1–3.3, Figures 1–3, PDF pp. 1–5",
+      "url": "https://openaccess.thecvf.com/content/CVPR2025/papers/Yang_Bridging_Gait_Recognition_and_Large_Language_Models_Sequence_Modeling_CVPR_2025_paper.pdf"
+    },
+    {
+      "claim": "Gait3D、GREW、CCPG 和 SUSTech1K 的主结果及不同 gait encoder 对比支持 LLM 插件带来的性能增益。",
+      "locator": "Section 4.3, Tables 2–4, PDF pp. 6–7",
+      "url": "https://openaccess.thecvf.com/content/CVPR2025/papers/Yang_Bridging_Gait_Recognition_and_Large_Language_Models_Sequence_Modeling_CVPR_2025_paper.pdf"
+    },
+    {
+      "claim": "不同 aggregation 和 language model 的实验显示 GMP 与 Qwen 配置的效果，并报告 543M 总参数、4.3% 可训练及 31.5 FPS。",
+      "locator": "Sections 4.2 and 4.4, Tables 7–8, PDF pp. 6, 8–9",
+      "url": "https://openaccess.thecvf.com/content/CVPR2025/papers/Yang_Bridging_Gait_Recognition_and_Large_Language_Models_Sequence_Modeling_CVPR_2025_paper.pdf"
+    },
+    {
+      "claim": "作者指出缺少 gait foundation model、冻结 encoder/LLM 以及 aggregation 仍可改进等后续方向。",
+      "locator": "Section 4.4 and Conclusion, PDF pp. 8–9",
+      "url": "https://openaccess.thecvf.com/content/CVPR2025/papers/Yang_Bridging_Gait_Recognition_and_Large_Language_Models_Sequence_Modeling_CVPR_2025_paper.pdf"
+    }
   ],
   "generated_by": "YiLin Daily Research Agent",
   "generated_at": "2026-09-16T23:59:20Z",

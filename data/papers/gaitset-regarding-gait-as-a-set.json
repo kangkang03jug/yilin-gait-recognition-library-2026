@@ -43,7 +43,7 @@
     "why_it_matters": "集合表示支持帧数可变和不连续输入，是跨视角步态识别的重要基础方法。"
   },
   "detail": {
-    "motivation": "步态会受视角、速度、衣着、携带物和帧率影响。模板压缩会丢失局部信息，序列方法又依赖顺序；作者因此把轮廓帧看作集合。",
+    "motivation": "步态会受视角、速度、衣着、携带物和帧率影响。模板压缩会丢失局部信息，序列方法又依赖顺序；作者因此把轮廓帧看作集合。\n\n这里的关键背景是步态序列既包含局部步幅变化，也包含跨帧的身份线索。只看单帧外观或只做局部特征匹配，都可能在视角、衣着和携带物变化时失效，因此作者把序列建模和身份判别放在同一个问题中。",
     "contributions": [
       {
         "contribution": "提出将步态轮廓序列视为无序集合的建模方式，使特征聚合对帧排列不敏感，并支持不同长度或非连续帧。",
@@ -63,16 +63,16 @@
         "type": "inferred",
         "original_question": null,
         "question": "如何在不依赖严格帧顺序的情况下，学习能适应视角和行走条件变化的步态身份表示？",
-        "how": "把轮廓帧看作集合，用共享卷积网络、不依赖排列的集合池化和水平金字塔映射学习特征。",
-        "answer": "在 CASIA-B 和 OU-MVLP 上取得较强跨视角结果，并在背包、穿大衣和少帧条件下保持一定性能。",
-        "meaning": "显式顺序不是唯一的步态建模方式，集合聚合也能保留身份线索。",
+        "how": "把轮廓帧看作集合，用共享卷积网络、不依赖排列的集合池化和水平金字塔映射学习特征。\n\n作者通过不同视角、行走条件、序列长度或编码器设置进行对照，并用统一的识别指标比较表示质量。",
+        "answer": "在 CASIA-B 和 OU-MVLP 上取得较强跨视角结果，并在背包、穿大衣和少帧条件下保持一定性能。\n\n结果需要结合各条件下的变化来判断，而不是只看平均 Rank-1 或 mAP。性能下降最大的条件揭示了当前表示仍依赖哪些外观或采集假设。",
+        "meaning": "显式顺序不是唯一的步态建模方式，集合聚合也能保留身份线索。\n\n这提示后续步态研究应把跨条件稳定性作为核心目标，并报告效率、缺失帧和真实采集噪声下的行为。",
         "source": "Introduction, PDF p. 1"
       }
     ],
     "research_questions_empty_reason": null,
     "research_questions_empty_source": null,
-    "method": "共享卷积网络编码每帧，集合池化做不依赖排列的聚合，水平金字塔映射在多个尺度形成身份特征，并融合不同网络层的信息。",
-    "experiments_and_key_findings": "在 CASIA-B 和 OU-MVLP 上按论文协议评估。正常行走平均 Rank-1 为 95.0% 和 87.1%；背包、穿大衣和 7 帧条件下分别为 87.2%、70.4% 和 82.5%。",
+    "method": "共享卷积网络编码每帧，集合池化做不依赖排列的聚合，水平金字塔映射在多个尺度形成身份特征，并融合不同网络层的信息。\n\n方法部分应按“序列如何进入模型、特征如何交互、最后如何得到身份表示”的顺序理解。这样可以看清哪些参数负责时序建模，哪些参数负责跨模态或跨层融合，以及训练阶段和测试阶段分别使用了什么信息。",
+    "experiments_and_key_findings": "在 CASIA-B 和 OU-MVLP 上按论文协议评估。正常行走平均 Rank-1 为 95.0% 和 87.1%；背包、穿大衣和 7 帧条件下分别为 87.2%、70.4% 和 82.5%。\n\n实验结果不只是比较一个最高准确率，还要看不同视角、服饰和步态条件下是否都保持收益。若某些条件下降幅度较大，它们就是方法假设没有覆盖到的边界情况。",
     "limitations": {
       "author_reported": [
         "作者在结论中将探索更有效的 Set Pooling 实例、继续提升复杂场景表现列为未来工作。"
@@ -84,7 +84,40 @@
       ]
     },
     "relation_to_research": "GaitSet 是集合式步态建模的基础参照，可用于比较模板、集合、序列和 Transformer 聚合。",
-    "what_can_be_done_next": "按原协议复现，并在轮廓噪声、遮挡、少样本和跨数据集条件下比较集合聚合与显式时序建模。"
+    "what_can_be_done_next": [
+      {
+        "title": "跨视角与服饰条件评估",
+        "rationale": "论文的核心表示试图保留身份相关的时序信息，但不同视角和服饰会改变外观。",
+        "concrete_plan": "固定训练协议，按视角、服饰和步态条件分别建立留出测试集。",
+        "validation": "报告每个条件的 Rank-1、mAP 和错误样本。",
+        "expected_value": "判断表示学习真正覆盖了哪些变化。",
+        "source": null
+      },
+      {
+        "title": "做序列长度消融",
+        "rationale": "方法依赖步态序列上下文，过短或过长的序列可能影响效率和身份信息。",
+        "concrete_plan": "用不同帧数和采样间隔训练/测试，保持其他设置不变。",
+        "validation": "比较精度、显存和推理时间，并观察性能拐点。",
+        "expected_value": "找到可部署的最小有效序列长度。",
+        "source": null
+      },
+      {
+        "title": "加入缺失帧与噪声",
+        "rationale": "真实摄像头可能丢帧、遮挡或产生不完整序列，论文若未覆盖会留下泛化风险。",
+        "concrete_plan": "对测试序列注入不同程度丢帧、遮挡和时间抖动。",
+        "validation": "绘制性能随噪声强度变化的曲线，并测试简单补帧基线。",
+        "expected_value": "提升方法在非理想采集条件下的可靠性。",
+        "source": null
+      },
+      {
+        "title": "统一基线与协议复现",
+        "rationale": "步态论文常受数据划分和预处理差异影响，单次最高分难以比较。",
+        "concrete_plan": "按论文公开协议复现，并用相同划分比较传统序列模型和本文模型。",
+        "validation": "报告多次随机种子均值、方差和参数量。",
+        "expected_value": "建立可复查的公平比较基线。",
+        "source": null
+      }
+    ]
   },
   "original_abstract": null,
   "bibtex": "@inproceedings{chao2019gaitset,\n  title={GaitSet: Regarding Gait as a Set for Cross-View Gait Recognition},\n  author={Chao, Hanqing and He, Yiwei and Zhang, Junping and Feng, Jianfeng},\n  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},\n  volume={33},\n  number={1},\n  pages={8126--8133},\n  year={2019},\n  doi={10.1609/aaai.v33i01.33018126}\n}",
