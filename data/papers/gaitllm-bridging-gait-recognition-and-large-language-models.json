@@ -29,6 +29,7 @@
     ],
     "research_questions": [{
       "type": "inferred",
+      "original_question": null,
       "question": "预训练 LLM 的通用序列建模能力能否通过合适的 gait-to-language / language-to-gait 表征桥接，有效迁移到步态识别并提升复杂时序依赖的建模？",
       "how": "作者将连续 silhouette gait features 转换为 clip-level“gait sentence”，使用冻结的 Qwen-0.5B 等语言模型处理，再映射回 gait feature space，并在四个 gait datasets、多个 gait encoders 以及不同 LLM 设置下比较识别性能。",
       "answer": "实验表明，引入 LLM 后多个 encoder 的识别性能均提升；例如 Gait3D 上 10-layer DeepGaitV2-P3D 的 Rank-1 从 67.4% 提升到 74.1%，GREW 从 69.0% 提升到 71.2%，说明 LLM sequence prior 能在该桥接设计下提供有效增益。",

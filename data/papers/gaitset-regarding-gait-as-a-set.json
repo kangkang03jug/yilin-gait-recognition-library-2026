@@ -61,6 +61,7 @@
     "research_questions": [
       {
         "type": "inferred",
+        "original_question": null,
         "question": "如何在不依赖严格帧顺序的前提下，学习对视角与行走条件变化具有鲁棒性的步态身份表示？",
         "how": "论文从模板和序列表示的局限出发，将步态建模为轮廓集合；通过共享 CNN、置换不变 Set Pooling、Horizontal Pyramid Mapping 与 Multilayer Global Pipeline 构造特征，并用 Batch All triplet loss 学习区分性表示。",
         "answer": "在论文评测的 CASIA-B 与 OU-MVLP 协议中，该集合表示取得了较强的跨视角识别结果，并在背包、穿大衣及少帧条件下保持一定鲁棒性。",
