@@ -36,14 +36,14 @@
   "relevance": "High",
   "reading_basis": "full_text",
   "quick_read": {
-    "tldr": "GaitSet 将步态轮廓序列建模为无序集合，通过置换不变的 Set Pooling 聚合帧级特征，再结合 Horizontal Pyramid Mapping 与多层全局特征学习身份表示。",
-    "problem_and_motivation": "步态模板容易丢失细粒度时空信息，序列模型则依赖时序结构且训练成本较高。论文关注如何在不强制帧顺序的情况下，获得能适应视角、衣着和携带物变化的身份表示。",
-    "core_method": "共享 CNN 独立编码每帧；Set Pooling 在集合维进行置换不变聚合；Horizontal Pyramid Mapping 对不同水平尺度的特征进行映射；Multilayer Global Pipeline 融合多个网络层级的集合信息，并以 Batch All triplet loss 训练。",
-    "key_results": "论文报告 CASIA-B 正常行走平均 Rank-1 为 95.0%，OU-MVLP 为 87.1%；CASIA-B 背包与穿大衣条件分别为 87.2% 和 70.4%，仅使用 7 帧时为 82.5%。",
-    "why_it_matters": "集合式表示允许输入帧非连续、数量可变，且能够融合不同视频与视角的信息，是理解跨视角步态识别的重要基线。"
+    "tldr": "GaitSet 把步态轮廓看成无序集合，通过不依赖帧顺序的聚合学习身份特征。",
+    "problem_and_motivation": "模板会丢失细节，序列模型又依赖帧顺序并增加计算。论文希望在不强制顺序的情况下应对视角、衣着和携带物变化。",
+    "core_method": "共享卷积网络独立编码每帧，用集合池化聚合，再通过水平金字塔映射和多层特征融合学习身份表示。",
+    "key_results": "CASIA-B 正常行走平均 Rank-1 为 95.0%，OU-MVLP 为 87.1%；背包、穿大衣和仅 7 帧时分别达到 87.2%、70.4% 和 82.5%。",
+    "why_it_matters": "集合表示支持帧数可变和不连续输入，是跨视角步态识别的重要基础方法。"
   },
   "detail": {
-    "motivation": "步态可在远距离、非接触条件下用于身份识别，但会受到视角、行走速度、服装、携带物和帧率影响。模板方法将多帧压缩为单张图，容易丢失时间与局部空间信息；视频序列方法保留时序，却引入顺序约束和更高计算成本。作者据此提出将步态看成由独立轮廓帧组成的集合。",
+    "motivation": "步态会受视角、速度、衣着、携带物和帧率影响。模板压缩会丢失局部信息，序列方法又依赖顺序；作者因此把轮廓帧看作集合。",
     "contributions": [
       {
         "contribution": "提出将步态轮廓序列视为无序集合的建模方式，使特征聚合对帧排列不敏感，并支持不同长度或非连续帧。",
@@ -62,17 +62,17 @@
       {
         "type": "inferred",
         "original_question": null,
-        "question": "如何在不依赖严格帧顺序的前提下，学习对视角与行走条件变化具有鲁棒性的步态身份表示？",
-        "how": "论文从模板和序列表示的局限出发，将步态建模为轮廓集合；通过共享 CNN、置换不变 Set Pooling、Horizontal Pyramid Mapping 与 Multilayer Global Pipeline 构造特征，并用 Batch All triplet loss 学习区分性表示。",
-        "answer": "在论文评测的 CASIA-B 与 OU-MVLP 协议中，该集合表示取得了较强的跨视角识别结果，并在背包、穿大衣及少帧条件下保持一定鲁棒性。",
-        "meaning": "结果说明，对于轮廓步态识别，显式序列顺序并非唯一可行的时空信息建模方式；集合聚合能在灵活输入条件下保留有用的空间与身份线索。",
+        "question": "如何在不依赖严格帧顺序的情况下，学习能适应视角和行走条件变化的步态身份表示？",
+        "how": "把轮廓帧看作集合，用共享卷积网络、不依赖排列的集合池化和水平金字塔映射学习特征。",
+        "answer": "在 CASIA-B 和 OU-MVLP 上取得较强跨视角结果，并在背包、穿大衣和少帧条件下保持一定性能。",
+        "meaning": "显式顺序不是唯一的步态建模方式，集合聚合也能保留身份线索。",
         "source": "Introduction, PDF p. 1"
       }
     ],
     "research_questions_empty_reason": null,
     "research_questions_empty_source": null,
-    "method": "对身份为 i 的轮廓集合 X_i，模型计算 f_i = H(G(F(X_i)))：F 是逐帧共享 CNN，G 是置换不变的 Set Pooling，H 是学习判别身份表示的 Horizontal Pyramid Mapping。Set Pooling 可采用 max、mean、median、统计量组合或 attention；HPM 将集合特征按多个水平尺度切分并分别映射。Multilayer Global Pipeline 汇合不同网络层级的集合特征。训练采用 Batch All triplet loss，测试时拼接多尺度表示并用欧氏距离进行检索。",
-    "experiments_and_key_findings": "实验分为与既有方法比较、CASIA-B 消融和实际条件评估。CASIA-B 包含 124 个受试者、11 个视角及正常、背包、穿大衣三类条件；因没有官方划分，论文采用 ST/MT/LT 三种训练规模。OU-MVLP 包含 10,307 个受试者、每人 14 个视角，并按受试者划分训练与测试。论文报告 CASIA-B 正常行走平均 Rank-1 95.0%、OU-MVLP 87.1%；CASIA-B 背包 87.2%、穿大衣 70.4%，7 帧测试为 82.5%。具体数值依赖论文所述 gallery/probe 和排除同视角等协议。",
+    "method": "共享卷积网络编码每帧，集合池化做不依赖排列的聚合，水平金字塔映射在多个尺度形成身份特征，并融合不同网络层的信息。",
+    "experiments_and_key_findings": "在 CASIA-B 和 OU-MVLP 上按论文协议评估。正常行走平均 Rank-1 为 95.0% 和 87.1%；背包、穿大衣和 7 帧条件下分别为 87.2%、70.4% 和 82.5%。",
     "limitations": {
       "author_reported": [
         "作者在结论中将探索更有效的 Set Pooling 实例、继续提升复杂场景表现列为未来工作。"
@@ -83,8 +83,8 @@
         "CASIA-B 没有官方训练测试拆分，因此结果比较需严格对齐 ST/MT/LT 及 gallery/probe 协议。"
       ]
     },
-    "relation_to_research": "GaitSet 是步态识别中集合建模的代表性工作，可作为跨视角轮廓识别的基础参照。围绕它可以组织模板、序列、集合三类表示方法，并进一步比较局部时序、姿态输入及 Transformer 聚合等后续路线。",
-    "what_can_be_done_next": "按论文协议复现并与 GaitPart、GaitGL 等方法统一比较；测试集合聚合与显式时序建模的混合方案；在轮廓噪声、遮挡、少样本和跨数据集设置下进行稳健性评估，并报告视角组合和条件划分的细粒度结果。"
+    "relation_to_research": "GaitSet 是集合式步态建模的基础参照，可用于比较模板、集合、序列和 Transformer 聚合。",
+    "what_can_be_done_next": "按原协议复现，并在轮廓噪声、遮挡、少样本和跨数据集条件下比较集合聚合与显式时序建模。"
   },
   "original_abstract": null,
   "bibtex": "@inproceedings{chao2019gaitset,\n  title={GaitSet: Regarding Gait as a Set for Cross-View Gait Recognition},\n  author={Chao, Hanqing and He, Yiwei and Zhang, Junping and Feng, Jianfeng},\n  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},\n  volume={33},\n  number={1},\n  pages={8126--8133},\n  year={2019},\n  doi={10.1609/aaai.v33i01.33018126}\n}",
