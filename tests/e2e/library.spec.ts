@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 test('personal library has accessible primary pages', async ({ page }) => {
   await page.goto('/');
-  await expect(
-    page.getByRole('heading', { name: '步态识别' }),
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: '步态识别' })).toBeVisible();
   await expect(page.locator('.hero-subtitle')).toHaveText('Research Library');
-  await expect(page.locator('.hero .lede')).toHaveText('A personal, searchable research knowledge base.');
+  await expect(page.locator('.hero .lede')).toHaveText(
+    'A personal, searchable research knowledge base.',
+  );
   await page.getByRole('link', { name: '论文池', exact: true }).click();
   await expect(page.getByRole('heading', { name: '论文池' })).toBeVisible();
   await expect(
