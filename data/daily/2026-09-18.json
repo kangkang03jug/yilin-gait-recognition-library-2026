@@ -1,0 +1,10 @@
+{
+  "date": "2026-09-18",
+  "recommendations": [
+    {
+      "paper_id": "hypergait-unleashing-the-power-of-parsing-for-gait-recognition-in-the-wild-via-hypergraph",
+      "primary": true,
+      "run_type": "scheduled"
+    }
+  ]
+}
