@@ -5,6 +5,11 @@
       "paper_id": "hypergait-unleashing-the-power-of-parsing-for-gait-recognition-in-the-wild-via-hypergraph",
       "primary": true,
       "run_type": "scheduled"
+    },
+    {
+      "paper_id": "eventgait-towards-robust-gait-recognition-with-event-streams",
+      "primary": false,
+      "run_type": "manual"
     }
   ]
 }

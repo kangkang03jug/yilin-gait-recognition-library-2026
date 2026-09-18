@@ -1,0 +1,165 @@
+{
+  "id": "eventgait-towards-robust-gait-recognition-with-event-streams",
+  "title": "EventGait: Towards Robust Gait Recognition with Event Streams",
+  "authors": [
+    "Senyan Xu",
+    "Shuai Chen",
+    "Chuanfu Shen",
+    "Kean Liu",
+    "Zhijing Sun",
+    "Chengzhi Cao",
+    "Xueyang Fu"
+  ],
+  "year": 2026,
+  "publication_date": null,
+  "venue_or_source": "CVPR 2026",
+  "venue_type": "Conference",
+  "ranking": {
+    "ccf": null,
+    "cas": null,
+    "jcr": null,
+    "ranking_year": null,
+    "ranking_source": null
+  },
+  "identifiers": {
+    "doi": null,
+    "arxiv": "2605.22139",
+    "openreview": null
+  },
+  "urls": {
+    "paper": "https://openaccess.thecvf.com/content/CVPR2026/html/Xu_EventGait_Towards_Robust_Gait_Recognition_with_Event_Streams_CVPR_2026_paper.html",
+    "code": "https://github.com/QUEAHREN/EventGait"
+  },
+  "topics": [
+    "步态识别",
+    "事件相机",
+    "脉冲神经网络",
+    "低照度鲁棒性",
+    "跨模态蒸馏",
+    "域泛化"
+  ],
+  "relevance": "High",
+  "reading_basis": "full_text",
+  "quick_read": {
+    "tldr": "EventGait 用事件相机而不是普通 RGB 视频做步态识别，把高时间分辨率的运动信息和较稠密的人体结构信息分开建模。动态分支用 Mixture of Spiking Experts（MoSE）适应不同运动与光照条件，静态分支通过 Cross-modal Structural Alignment（CroSA）从视觉基础模型获得结构先验。论文在合成与真实事件步态数据上取得很强结果，尤其在低照度场景下优势明显。",
+    "problem_and_motivation": "普通相机在夜间、强明暗变化和快速运动下容易丢失有效步态信息。事件相机具有高动态范围和微秒级时间分辨率，但已有方法常把事件流长时间聚合成稀疏事件图像，既损失细粒度动态，又难以得到稳定的人体结构表示。论文因此研究如何同时保留事件流的动态优势和可用于身份识别的形状信息。",
+    "core_method": "EventGait 采用动态/静态双流结构。动态流以脉冲神经网络为基础，用多个具有不同膜时间常数的专家建模不同时间尺度的运动，再由门控模块自适应融合；静态流通过 CroSA，把预训练视觉基础模型中的稠密人体结构知识对齐到事件表示。作者还从 RGB 步态视频合成事件流，构建 SUSTech1K-E 和 CCGR-Mini-E 两个新基准。",
+    "key_results": "在 SUSTech1K-E 上，EventGait 的总体 Rank-1 达到 92.8%，低照度和换衣等困难条件下相对普通相机方法优势更明显；在 CCGR-Mini-E 上达到 40.3% Rank-1、38.7% mAP、25.5% mINP。消融显示完整双流明显优于单动态流或单静态流，3 个 MoSE 专家在精度与效率之间最好。",
+    "why_it_matters": "这篇工作说明步态识别的性能瓶颈不一定只在模型结构，也可能来自传感器本身。事件相机把弱光和高速运动下仍稳定的动态信息引入步态识别，为真实场景鲁棒性、多模态融合和跨域泛化提供了新的研究方向。"
+  },
+  "detail": {
+    "motivation": "现有视觉步态识别大多依赖 RGB、轮廓、骨架或深度信息，但普通相机在低照度、强光照变化和快速运动时会出现严重信息退化。事件相机只记录亮度变化事件，具有很高的时间分辨率和动态范围，因此天然更适合捕获运动边缘，并能降低静态纹理和颜色干扰。\n\n问题在于，事件数据本身高度稀疏。已有事件视觉方法常把较长时间窗口内的事件聚合为图像或体素，再交给 CNN/GNN 处理。这样会牺牲事件流最有价值的细粒度时间信息，同时稀疏空间表示又不利于学习稳定的人体形状。作者因此将“动态运动”和“静态结构”拆开建模，希望同时利用事件相机的时间优势和身份判别所需的身体结构。",
+    "contributions": [
+      {
+        "contribution": "提出 EventGait，一个面向事件相机步态识别的端到端双流框架，把动态运动与静态结构分开建模，避免单一表示同时承担高时间分辨率和稠密空间结构两个目标。",
+        "source": "Introduction, PDF pp. 1–2; Method overview, Sec. 3"
+      },
+      {
+        "contribution": "设计 Mixture of Spiking Experts（MoSE），让多个具有不同膜时间常数的脉冲专家覆盖不同时间尺度的事件变化，并通过门控融合提升不同运动和光照条件下的动态感知能力。",
+        "source": "Sec. 3, Dynamic Motion stream; Table 6"
+      },
+      {
+        "contribution": "设计 Cross-modal Structural Alignment（CroSA），在训练阶段利用视觉基础模型提供稠密结构先验，把事件静态分支从稀疏事件中学习到更稳定的人体形状表示。",
+        "source": "Sec. 3, Static Shape stream; Table 7"
+      },
+      {
+        "contribution": "针对事件步态数据不足的问题，构建从 RGB 步态视频合成事件流的流程，并发布 SUSTech1K-E 与 CCGR-Mini-E，同时在真实事件数据上验证方法。",
+        "source": "Sec. 4 Datasets; Sec. 5 Main Results"
+      },
+      {
+        "contribution": "系统比较普通相机、LiDAR 与事件模态在正常光照、低照度和跨域条件下的表现，并通过双流、MoSE 与 CroSA 消融说明各组件的独立贡献。",
+        "source": "Sec. 5.2–5.3; Tables 1–7; Fig. 5"
+      }
+    ],
+    "research_questions": [
+      {
+        "type": "inferred",
+        "question": "事件相机能否在保留细粒度运动信息的同时补足稀疏空间结构，从而提升真实场景尤其是低照度条件下的步态识别鲁棒性？",
+        "original_question": null,
+        "how": "作者构建 EventGait 双流框架，并在 SUSTech1K-E、CCGR-Mini-E、EV-CASIA-B、DVS128-Gait 及跨域设置中，与轮廓、事件和 LiDAR 方法比较 Rank-1、mAP、mINP 及不同条件下的识别表现；同时用组件消融检验动态流、静态流、MoSE 与 CroSA。",
+        "answer": "结果支持这一目标。EventGait 在 SUSTech1K-E 上总体 Rank-1 达到 92.8%，在低照度和换衣等困难条件下相对普通相机方法优势更大；在 CCGR-Mini-E 上达到 40.3% Rank-1、38.7% mAP、25.5% mINP，并在真实事件数据上保持竞争力。",
+        "meaning": "事件模态的价值不仅是替代摄像头输入，而是在弱光和快速运动时提供更稳定的动态证据。要真正利用这种优势，需要同时解决事件流的时间建模和空间稀疏问题，而不是简单把事件聚合成普通图像。",
+        "source": "Introduction, PDF pp. 1–2"
+      }
+    ],
+    "research_questions_empty_reason": null,
+    "research_questions_empty_source": null,
+    "method": "EventGait 把事件输入拆成动态和静态两条路径。动态流强调高时间分辨率运动。作者使用脉冲神经网络处理事件序列，并进一步构建 Mixture of Spiking Experts（MoSE）：多个专家使用不同膜时间常数，使“快”专家更敏感于高频事件变化，“慢”专家能在事件较稀疏时积累更长时间的信息。门控网络根据输入动态分配专家权重，因此不同光照、速度和运动模式可以采用不同时间尺度。\n\n静态流解决事件空间稀疏导致的身体结构缺失。Cross-modal Structural Alignment（CroSA）在训练阶段引入预训练视觉基础模型作为教师，从同步图像中提取稠密结构特征，再让事件静态编码器通过特征对齐学习人体结构先验。实验显示使用 L2 对齐且权重为 0.2 时效果最好；对齐过弱不能提供足够结构指导，过强则可能把衣着纹理等与身份无关的 RGB 信息带入事件表示。\n\n两条分支最终融合用于身份判别。为缓解真实大规模事件步态数据不足，作者还把现有 RGB 步态数据通过插帧和事件模拟转为事件流，形成 SUSTech1K-E 与 CCGR-Mini-E，并同时使用真实或回放采集的事件数据验证 sim-to-real 能力。",
+    "experiments_and_key_findings": "主实验首先比较 SUSTech1K-E 上不同输入模态。EventGait 的总体 Rank-1 为 92.8%，作者报告相对摄像头方法在整体条件下提升 5.2 个百分点，并且在换衣和夜间等困难场景中的优势更明显：换衣条件提升 18.4 个百分点，夜间提升 37.3 个百分点。结果说明事件流对光照变化和外观干扰更稳定。\n\n在 CCGR-Mini-E 上，EventGait 达到 40.3% Rank-1、38.7% mAP、25.5% mINP；在 EV-CASIA-B 的正常行走条件下达到 96.7%。论文还做了跨域与真实事件实验，说明事件模态虽然提高低照度鲁棒性，但大范围跨数据集变化仍然是难点。\n\n消融显示双流互补非常明显：只保留静态流时总体 Rank-1 为 82.0%，只保留动态流为 72.4%，完整模型达到 92.8%。MoSE 从单专家扩展到 3 个专家时总体性能从约 88.4% 提升到 92.8%，继续增加到 4 个专家收益很小。CroSA 也有明显贡献：无结构对齐时总体为 87.4%，使用 L2 对齐并令权重为 0.2 时达到 92.8%。",
+    "limitations": {
+      "author_reported": [
+        "作者明确指出当前大规模基准主要依赖从 RGB 视频合成的事件流，未来需要收集更大、更丰富的真实事件步态数据，以减小仿真到真实之间的差距。",
+        "作者把与 RGB、LiDAR 等模态进一步融合列为未来工作，说明当前框架主要验证事件模态本身及其内部双流建模，尚未系统研究跨传感器协同。"
+      ],
+      "ai_analysis": [
+        "CroSA 在训练阶段依赖同步图像和视觉基础模型教师，因此“纯事件传感器”场景下的数据采集与训练成本仍可能受额外 RGB 配对限制；可以进一步测试无同步 RGB 的自监督结构学习。",
+        "SUSTech1K-E 与 CCGR-Mini-E 由 RGB 数据合成，事件噪声、传感器响应、时间戳抖动和真实低照度条件与实际硬件之间仍可能存在系统差异，跨真实设备的泛化需要单独验证。",
+        "事件相机改善了弱光鲁棒性，但跨数据集实验仍显示明显域差异，说明传感器优势不能替代对视角、衣着、场景和人群分布偏移的建模。"
+      ]
+    },
+    "relation_to_research": "这篇论文与 YiLin 的步态识别方向直接相关，而且补充了现有轮廓、骨架、人体解析和 RGB 路线之外的传感器视角。它特别适合用于研究“输入模态决定了哪些鲁棒性上限”：普通相机在夜间退化明显，而事件相机在光照变化下更稳定。\n\n对后续研究而言，EventGait 可以作为低照度鲁棒步态识别、多模态融合和跨域评估的重要基线。还可以与 HyperGait 的高阶结构建模、GaitLLM 的序列建模进行横向比较，区分性能提升究竟来自更强输入、更好的时序模型，还是更合理的结构先验。",
+    "what_can_be_done_next": [
+      {
+        "title": "扩大真实事件步态数据并量化 sim-to-real 差距",
+        "rationale": "作者明确把真实事件数据规模不足视为后续重点，而当前两个主要事件基准很大程度依赖 RGB→event 合成。",
+        "concrete_plan": "采集覆盖白天/夜间、不同曝光、步速、视角、衣着和遮挡条件的真实事件步态序列，同时保留与现有 SUSTech1K-E、CCGR-Mini-E 相匹配的评测协议。",
+        "validation": "分别在合成→真实、真实→真实和跨设备设置下报告 Rank-1、mAP、mINP，并分析不同光照与运动条件下的性能差距。",
+        "expected_value": "判断 EventGait 的主要增益能否从仿真数据稳定迁移到真实传感器，并为后续事件步态方法提供更可信的基准。",
+        "source": "Conclusion and Future Work, PDF p. 10"
+      },
+      {
+        "title": "事件与 RGB/LiDAR 的条件式多模态融合",
+        "rationale": "作者明确提出未来探索 RGB/LiDAR 融合。事件相机在低照度和快速运动时更强，而 RGB/LiDAR 在结构细节和正常场景中仍有互补信息。",
+        "concrete_plan": "设计根据光照、事件密度和运动强度动态选择或加权模态的融合模块，并与固定拼接、注意力融合和单事件模型比较。",
+        "validation": "在正常光照、低照度、换衣、跨视角与跨域条件下分别报告性能和推理成本，同时测试某一模态缺失时的鲁棒性。",
+        "expected_value": "让系统在不同环境中利用最可靠的传感器信息，而不是始终依赖同一模态，从而提高真实部署稳定性。",
+        "source": "Conclusion and Future Work, PDF p. 10"
+      },
+      {
+        "title": "无同步 RGB 教师的事件结构学习",
+        "rationale": "CroSA 依赖视觉基础模型从同步图像提供结构监督，这提高了静态分支质量，但训练阶段仍需要额外图像信息。",
+        "concrete_plan": "用事件重建、自监督时序一致性、人体结构伪标签或事件预训练模型替代同步 RGB 教师，并保留现有 CroSA 作为上界对照。",
+        "validation": "比较有/无 RGB 教师时的 Rank-1、mAP、训练数据需求和跨设备泛化，并评估不同事件稀疏度下的性能下降。",
+        "expected_value": "降低训练数据采集依赖，使事件步态识别更接近真正的单传感器方案，并检验结构先验是否必须来自 RGB。",
+        "source": "Sec. 3 Static Shape stream; Table 7"
+      },
+      {
+        "title": "面向跨域变化的事件鲁棒适应",
+        "rationale": "论文表明事件模态在弱光下优势明显，但跨数据集结果仍存在较大性能下降，说明视角、场景和人群分布偏移仍未解决。",
+        "concrete_plan": "在 EventGait 上加入轻量域适应、测试时适应或域不变正则，并分别作用于动态流、静态流和融合层，分析哪一部分最容易产生域偏移。",
+        "validation": "使用 CCGR-Mini-E↔SUSTech1K-E 以及真实事件数据进行双向跨域实验，报告 Rank-1/mAP/mINP、校准误差和适应成本。",
+        "expected_value": "把事件模态的低照度优势扩展到更广泛的跨场景泛化，而不是只在同域数据上获得高准确率。",
+        "source": "Sec. 5.2, Table 3"
+      }
+    ]
+  },
+  "original_abstract": "Gait recognition enables non-intrusive, privacy-preserving identification but suffers in uncontrolled environments due to illumination and motion sensitivity of conventional cameras. In this work, we explore gait recognition using event cameras, which offer microsecond temporal resolution and high dynamic range, naturally capturing robust dynamic cues and suppressing static noise. Existing event-based approaches typically aggregate event streams into event images over long time windows, thereby discarding fine-grained motion dynamics critical for gait recognition. Therefore, we propose EventGait, an end-to-end dual-stream framework that separately models motion and shape while preserving the advantages of events. Our dynamic stream leverages a Mixture of Spiking Experts (MoSE) with diverse neuron constants for robust dynamic perception across complex motion and illumination scenes, while the static stream learns dense shape representations via Cross-modal Structural Alignment (CroSA) with large vision foundation models. To address the absence of large-scale event-based gait datasets, we introduce a synthesis pipeline and release two new benchmarks: SUSTech1K-E and CCGR-Mini-E. Extensive experiments have shown that event-based gait recognition not only achieves results comparable to camera-based gait recognition under normal conditions but also significantly outperforms it in low-light scenarios. Our approach sets a new state of the art on both synthesized and real-world event-based gait benchmarks, highlighting the robustness and potential of event-driven gait analysis. The code and datasets are released at https://github.com/QUEAHREN/EventGait.",
+  "bibtex": "@InProceedings{Xu_2026_CVPR,\n  author = {Xu, Senyan and Chen, Shuai and Shen, Chuanfu and Liu, Kean and Sun, Zhijing and Cao, Chengzhi and Fu, Xueyang},\n  title = {EventGait: Towards Robust Gait Recognition with Event Streams},\n  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},\n  month = {June},\n  year = {2026},\n  pages = {22323-22334}\n}",
+  "figures": [],
+  "evidence": [
+    {
+      "claim": "EventGait uses a dual-stream design with MoSE for dynamic motion and CroSA for static structure.",
+      "locator": "Introduction; Sec. 3",
+      "url": "https://openaccess.thecvf.com/content/CVPR2026/html/Xu_EventGait_Towards_Robust_Gait_Recognition_with_Event_Streams_CVPR_2026_paper.html"
+    },
+    {
+      "claim": "EventGait reaches 92.8% overall Rank-1 on SUSTech1K-E and shows large gains in difficult lighting/appearance conditions.",
+      "locator": "Sec. 5.2, Table 1",
+      "url": "https://openaccess.thecvf.com/content/CVPR2026/papers/Xu_EventGait_Towards_Robust_Gait_Recognition_with_Event_Streams_CVPR_2026_paper.pdf"
+    },
+    {
+      "claim": "On CCGR-Mini-E, EventGait reports 40.3% Rank-1, 38.7% mAP, and 25.5% mINP.",
+      "locator": "Sec. 5.2, Table 2",
+      "url": "https://openaccess.thecvf.com/content/CVPR2026/papers/Xu_EventGait_Towards_Robust_Gait_Recognition_with_Event_Streams_CVPR_2026_paper.pdf"
+    },
+    {
+      "claim": "Future work targets larger real-event datasets and multimodal fusion with RGB/LiDAR.",
+      "locator": "Sec. 6 Conclusion and Future Work",
+      "url": "https://openaccess.thecvf.com/content/CVPR2026/papers/Xu_EventGait_Towards_Robust_Gait_Recognition_with_Event_Streams_CVPR_2026_paper.pdf"
+    }
+  ],
+  "generated_by": "ChatGPT",
+  "generated_at": "2026-09-18T12:18:00Z",
+  "updated_at": "2026-09-18T12:18:00Z",
+  "owner_edited": false
+}
