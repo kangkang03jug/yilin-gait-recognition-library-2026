@@ -1,7 +1,7 @@
 profile:
   researcher: YiLin
   library_name: YiLin's Gait Recognition Research Library
-  description: A personal, searchable research knowledge base.
+  description: 围绕步态识别，整理数据集、识别方法、跨域评测与可复现研究证据。
 research_scope:
   primary:
     - 步态识别
