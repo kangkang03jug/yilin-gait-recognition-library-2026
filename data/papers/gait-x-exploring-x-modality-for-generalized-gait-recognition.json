@@ -1,0 +1,67 @@
+{
+  "id": "gait-x-exploring-x-modality-for-generalized-gait-recognition",
+  "title": "Gait-X: Exploring X modality for Generalized Gait Recognition",
+  "authors": ["Zengbin Wang", "Saihui Hou", "Junjie Li", "Xu Liu", "Chunshui Cao", "Yongzhen Huang", "Siye Wang", "Man Zhang"],
+  "year": 2025,
+  "publication_date": null,
+  "venue_or_source": "ICCV 2025",
+  "venue_type": "Conference",
+  "ranking": {"ccf": null, "cas": null, "jcr": null, "ranking_year": null, "ranking_source": null},
+  "identifiers": {"doi": null, "arxiv": null, "openreview": null},
+  "urls": {"paper": "https://openaccess.thecvf.com/content/ICCV2025/html/Wang_Gait-X_Exploring_X_modality_for_Generalized_Gait_Recognition_ICCV_2025_paper.html", "code": null},
+  "topics": ["步态识别", "跨域泛化", "频域分析", "输入模态", "换衣步态"],
+  "relevance": "High",
+  "reading_basis": "full_text",
+  "quick_read": {
+    "tldr": "Gait-X 研究的不是再设计一个更大的识别网络，而是重新设计步态输入表示。它把 RGB 图像分解到频域，去掉无关的极低频噪声并逐步抑制容易过拟合域信息的高频成分，再用频率分解训练让模型同时关注更宽的频率范围。结果表明，这种做法能同时提高同域识别和跨数据集泛化。",
+    "problem_and_motivation": "轮廓对背景和衣服纹理较稳健，但信息过少；RGB 信息丰富，却容易依赖衣服颜色、纹理和背景。Parsing、3D mesh 等新模态又依赖上游估计器，稳定性和可控性不足。作者因此问：能否不用额外的上游估计器，直接从频率角度得到一个稳定、可调且更容易泛化的步态模态？",
+    "core_method": "先对 RGB 做分块离散余弦变换，把局部图像拆成从低到高的频率成分。X modality 删除极低频成分，并随频率升高逐步抑制高频信息，以减少亮度、背景、纹理和域特有线索。训练时再把各频率位置重新组织成频谱图像，与 X modality 分支共同学习，使模型不只盯住容易过拟合的高频特征。",
+    "key_results": "在 CCPG、SUSTech1K 和 CASIA-B 上，Gait-X 的同域结果均有明显提升；CASIA-B 平均 Rank-1 达到 97.7%。跨域实验中，CCPG→CASIA-B 平均 Rank-1 相比对照提升 1.6 个百分点，CCPG→SUSTech1K 总体结果提升 21.5 个百分点。",
+    "why_it_matters": "这篇论文把“步态识别该用什么输入”从轮廓、RGB、Parsing 等离散选择，转成可以连续调节的频率选择问题。它尤其适合研究跨域泛化，因为频率成分能直接分析哪些信息有助于身份识别、哪些信息只是数据集特有噪声。"
+  },
+  "detail": {
+    "motivation": "步态识别长期在“信息量”和“抗干扰”之间取舍。二值轮廓去掉了背景与衣服纹理，但也丢失大量身份相关细节；RGB 保留更多信息，却容易记住衣服颜色、纹理和背景。Parsing、3D mesh、点云等模态试图在两者之间取得平衡，但通常依赖额外的上游估计模型，估计误差和模型选择会直接影响下游识别。\n\n作者注意到频率分解是确定性的、近似无损且可控的。不同频率与颜色、亮度、纹理、语义和背景信息存在不同关联，因此可以把“设计步态模态”转化为“选择和调节频率成分”。论文进一步观察到模型训练过程中会从低频逐渐转向高频，而过度依赖高频会损害跨域泛化，由此提出同时改造输入模态和训练过程。",
+    "contributions": [
+      {"contribution": "提出从频域角度系统研究步态输入模态与泛化问题，用稳定的频率分解替代依赖上游估计器的模态生成流程。", "source": "Introduction, PDF pp. 1–2"},
+      {"contribution": "构造 gait-specific X modality：删除无关的极低频成分，并逐步抑制高频域特有信息，在保留判别信息的同时降低背景、纹理等干扰。", "source": "Method, Sec. 4.2, PDF pp. 4–5"},
+      {"contribution": "提出频率分解训练策略，把同一频率位置跨局部块重新组织为频谱图像，扩大模型训练时关注的频率范围，减轻向高频过拟合。", "source": "Method, Sec. 4.3, PDF pp. 5–6"},
+      {"contribution": "在 CCPG、SUSTech1K、CASIA-B 上同时进行同域和跨域评测，并通过消融分别验证 X modality 与 decomposition training 对泛化的贡献。", "source": "Experiments, Secs. 5.2–5.4, Tables 1–6, PDF pp. 6–9"}
+    ],
+    "research_questions": [{
+      "type": "inferred",
+      "question": "如何以稳定、灵活且不依赖额外上游估计器的方式构造步态专用输入模态，使其同时保持较强的同域识别能力和跨域泛化能力？",
+      "original_question": null,
+      "how": "作者用频率分解分析不同频率与步态模态、同域性能和跨域性能的关系，随后构造 X modality 与频率分解训练策略，并在 CCPG、SUSTech1K、CASIA-B 的同域及跨域协议上验证。",
+      "answer": "实验表明频率调节可以同时改善两类性能。Gait-X 在 CASIA-B 达到 97.7% 平均 Rank-1；跨域设置中，CCPG→CASIA-B 和 CCPG→SUSTech1K 也分别取得明显提升。消融显示 X modality 和频率分解训练单独使用都能提高跨域表现，组合后效果更强。",
+      "meaning": "作者的核心结论是：泛化差并不只来自网络结构，也来自输入中携带了过多域特有频率信息。通过显式控制频率，可以把模态设计和泛化目标直接联系起来。",
+      "source": "Introduction, PDF pp. 1–2; paragraph beginning 'Thus, a natural question arises'"
+    }],
+    "research_questions_empty_reason": null,
+    "research_questions_empty_source": null,
+    "method": "Gait-X 包含两个互补部分。第一部分是 X modality。输入 RGB 帧先按 8×8 局部块做离散余弦变换，得到由低到高排列的频率系数。作者根据频率分析删除极低频噪声，并对更高频率逐步施加抑制，从而降低亮度、背景、衣服纹理等容易随数据集变化的信息，同时保留比二值轮廓更丰富的判别线索。轮廓还被用作 mask 去除背景。\n\n第二部分是频率分解训练。作者把不同局部块中相同频率位置的系数重新组织成 K×K 个频谱图像，并将这些频谱表示送入 backbone，使训练过程显式接触更宽的频率范围。这样做针对一个观察：普通模型会在训练后期逐渐偏向高频，而高频往往包含更强的域特有信息，容易造成跨域性能下降。\n\n实现上采用 GaitBase 风格的 ResNet backbone，X modality 与频率分解训练走两个分支，backbone 后沿高度维拼接。论文使用 triplet loss 与交叉熵损失；CCPG/CASIA-B 训练 60k iterations，SUSTech1K 训练 40k iterations。",
+    "experiments_and_key_findings": "实验覆盖 CCPG、SUSTech1K 和 CASIA-B，并遵循各数据集官方协议。作者没有使用 Gait3D、GREW、OU-MVLP，原因是这些评测缺少方法所需的 RGB 输入。主实验同时看同域识别和跨域泛化。\n\n同域方面，CCPG 上 Gait-X 相比 skeleton、silhouette、RGB 的平均 Rank-1 分别提升 37.7、10.0、1.4 个百分点。SUSTech1K 上相对 skeleton、silhouette、LiDAR、RGB 的总体结果分别提升 33.9、14.8、6.7、0.1 个百分点，换衣条件达到 85.2%。CASIA-B 平均 Rank-1 达到 97.7%，其中最困难的 CL 条件相对已有强结果提高 3.2 个百分点。\n\n跨域方面，Table 4 显示 Gait-X 在三个数据集之间具有更强泛化；例如 CCPG→CASIA-B 平均 Rank-1 提升 1.6 个百分点，CCPG→SUSTech1K 总体提升 21.5 个百分点。消融中，单独加入 X modality 或 decomposition training，相对 baseline 的跨域平均 Rank-1 分别提升 17.5 和 25.1 个百分点，说明两部分都不是装饰性组件。",
+    "limitations": {
+      "author_reported": ["作者明确指出夜间条件仍然较弱：SUSTech1K 的 night 场景中，作为 mask 的轮廓分割质量下降，使 Gait-X 无法体现 LiDAR 在弱光下的天然优势。", "论文没有在 Gait3D、GREW、OU-MVLP 上评测，因为这些基准缺少方法所需的 RGB 输入；因此当前跨域结论只覆盖 CCPG、SUSTech1K 和 CASIA-B。", "当前 X modality 与 decomposition training 使用两个分支并在 backbone 后简单拼接，作者指出未来仍需要更精简的结构。"],
+      "ai_analysis": ["方法虽然不依赖 Parsing 或 3D mesh 估计器，但仍依赖 RGB 和 silhouette mask，因此并没有完全消除上游视觉预处理误差；夜间实验已经暴露这一点。", "频率与身份信息、域信息之间的关系是统计性的，不同相机压缩、分辨率和传感器噪声可能改变最佳频率范围。固定的频率抑制策略是否能跨更多真实设备保持稳定仍需验证。", "当前跨域实验规模有限，而且训练和测试数据集都属于常见步态基准。若面向真实部署，还应加入更大规模 in-the-wild 数据、压缩失真和摄像机变化。"]
+    },
+    "relation_to_research": "这篇论文与 YiLin 的步态识别主线高度相关，因为它直接回答“输入表示如何影响识别与泛化”。它可以和 HyperGait 的 parsing 高阶关系建模、EventGait 的事件传感器路线形成清晰对照：前者改变关系建模，后者改变传感器，而 Gait-X 在 RGB 内部通过频率重新定义模态。对后续研究尤其有价值的是它把跨域性能作为模态设计目标，而不是只追求单数据集 Rank-1。",
+    "what_can_be_done_next": [
+      {"title": "学习式频率选择", "rationale": "当前低频删除和高频抑制主要由人工分析确定，最佳频率范围可能随数据集和摄像机变化。", "concrete_plan": "把频率权重改为受稀疏或单调约束的可学习门控，并保留现有固定规则作为基线；同时记录不同域上学到的频率权重。", "validation": "在 CCPG↔SUSTech1K↔CASIA-B 多个跨域方向比较 Rank-1、频率权重稳定性和计算开销，并测试未见摄像机压缩与分辨率变化。", "expected_value": "判断频率抑制规律能否从人工经验变成可迁移的自适应机制，同时避免黑盒化。", "source": "Method Sec. 4.2; Experiments Sec. 5.3"},
+      {"title": "去除 silhouette mask 依赖", "rationale": "论文在 SUSTech1K 夜间条件中明确观察到 mask 分割失败会拖累性能。", "concrete_plan": "比较无 mask、软前景权重、自监督前景估计和现有硬 silhouette mask，并让频率门控同时学习抑制背景。", "validation": "重点报告 SUSTech1K night、低照度扰动和跨数据集设置下的 Rank-1，同时测量前景分割质量与识别性能的相关性。", "expected_value": "减少上游分割误差传播，使“稳定模态生成”这一核心主张在弱光环境下更完整。", "source": "Experiments Sec. 5.2–5.3, SUSTech1K night discussion"},
+      {"title": "频率机制与高阶关系联合", "rationale": "Gait-X 解决输入频率中的域噪声，HyperGait 一类方法解决身体部位与时间片的高阶关系，两者作用层次不同。", "concrete_plan": "先生成 Gait-X 表示，再在身体区域或时间片上构建图/超图关系；设置 RGB、Gait-X、Gait-X+关系建模三组，并控制 backbone 参数量。", "validation": "在换衣和跨域协议上同时比较 Rank-1/mAP、参数量和推理时间，确认收益来自互补机制而非模型增大。", "expected_value": "验证“先净化输入、再建模结构关系”是否能进一步提高真实场景泛化。", "source": "Introduction; Method Secs. 4.2–4.3"},
+      {"title": "真实图像退化鲁棒性", "rationale": "频率方法天然会受压缩、模糊、分辨率和传感器噪声影响，而论文主要按标准基准协议评测。", "concrete_plan": "在 RGB 层加入 JPEG 压缩、运动模糊、降采样、曝光变化和噪声，并观察各频段能量与识别结果如何变化。", "validation": "绘制不同退化强度下 RGB、silhouette、Gait-X 的 Rank-1 退化曲线，并增加跨设备测试。", "expected_value": "明确频率调节到底对哪些现实扰动有效，并找出可能失效的频率条件。", "source": "Figure 1; Experiments Sec. 5.1"}
+    ]
+  },
+  "original_abstract": "Modality exploration has been repeatedly mentioned in gait recognition, evolving from silhouette to parsing, mesh, point clouds, etc. These latest modalities agree that silhouette is less affected by background and clothing noises, but argue it loses too much valuable discriminative information. They seek to retain the strengths of silhouette while extracting more semantic or structural information through upstream estimation for better recognition. We agree with this principle but argue that these upstream estimations are usually unstable and the resulted modalities rely on pre-defined design. Moreover, the crucial aspect of modality generalization remains underexplored. To address this, we propose Gait-X to explore how to flexibly and stably develop a gait-specific generalized X modality from a frequency perspective. Specifically, 1) We replace upstream estimation with stable frequency decomposition and conduct a comprehensive analysis of how different frequencies impact modality and within-/cross-domain performance; 2) To enable flexible modality customization and mitigate the influence of noise and domain variations, we propose to remove irrelevant low-frequency noise and suppress high-frequency domain-specific information to form our X modality; 3) To further improve model generalization, we expand the representation across multiple frequencies to guide the model in balancing whole frequencies for enhanced generalization. Extensive experiments on CCPG, SUSTech1K, and CASIA-B datasets show superior generalization.",
+  "bibtex": "@InProceedings{Wang_2025_ICCV, author = {Wang, Zengbin and Hou, Saihui and Li, Junjie and Liu, Xu and Cao, Chunshui and Huang, Yongzhen and Wang, Siye and Zhang, Man}, title = {Gait-X: Exploring X modality for Generalized Gait Recognition}, booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)}, month = {October}, year = {2025}, pages = {13259-13269} }",
+  "figures": [],
+  "evidence": [
+    {"claim": "论文明确提出从频率角度构造稳定、灵活且更具泛化能力的 gait-specific X modality。", "locator": "Introduction, PDF pp. 1–2", "url": "https://openaccess.thecvf.com/content/ICCV2025/papers/Wang_Gait-X_Exploring_X_modality_for_Generalized_Gait_Recognition_ICCV_2025_paper.pdf"},
+    {"claim": "CASIA-B 平均 Rank-1 为 97.7%，CL 条件相对已有强结果提升 3.2 个百分点。", "locator": "Sec. 5.2, Table 3, PDF pp. 6–7", "url": "https://openaccess.thecvf.com/content/ICCV2025/papers/Wang_Gait-X_Exploring_X_modality_for_Generalized_Gait_Recognition_ICCV_2025_paper.pdf"},
+    {"claim": "CCPG→CASIA-B 和 CCPG→SUSTech1K 跨域评测分别报告 +1.6 和 +21.5 个百分点提升。", "locator": "Sec. 5.3, Table 4, PDF p. 7", "url": "https://openaccess.thecvf.com/content/ICCV2025/papers/Wang_Gait-X_Exploring_X_modality_for_Generalized_Gait_Recognition_ICCV_2025_paper.pdf"}
+  ],
+  "generated_by": "ChatGPT",
+  "generated_at": "2026-09-19T00:00:08Z",
+  "updated_at": "2026-09-19T00:00:08Z",
+  "owner_edited": false
+}
