@@ -1,0 +1,10 @@
+{
+  "date": "2026-09-20",
+  "recommendations": [
+    {
+      "paper_id": "vocabulary-guided-gait-recognition",
+      "primary": true,
+      "run_type": "scheduled"
+    }
+  ]
+}
