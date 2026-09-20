@@ -1,0 +1,6 @@
+{
+  "date": "2026-09-21",
+  "recommendations": [
+    {"paper_id": "on-denoising-walking-videos-for-gait-recognition", "primary": true, "run_type": "scheduled"}
+  ]
+}

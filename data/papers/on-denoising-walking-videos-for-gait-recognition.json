@@ -1,0 +1,66 @@
+{
+  "id": "on-denoising-walking-videos-for-gait-recognition",
+  "title": "On Denoising Walking Videos for Gait Recognition",
+  "authors": ["Dongyang Jin", "Chao Fan", "Jingzhe Ma", "Jingkai Zhou", "Weihua Chen", "Shiqi Yu"],
+  "year": 2025,
+  "publication_date": "2025-06-11",
+  "venue_or_source": "CVPR 2025",
+  "venue_type": "Conference",
+  "ranking": {"ccf": null, "cas": null, "jcr": null, "ranking_year": null, "ranking_source": null},
+  "identifiers": {"doi": null, "arxiv": "2505.18582", "openreview": null},
+  "urls": {"paper": "https://openaccess.thecvf.com/content/CVPR2025/html/Jin_On_Denoising_Walking_Videos_for_Gait_Recognition_CVPR_2025_paper.html", "code": "https://github.com/ShiqiYu/OpenGait"},
+  "topics": ["步态识别", "RGB视频", "扩散模型", "步态去噪", "换装鲁棒性", "跨域泛化"],
+  "relevance": "High",
+  "reading_basis": "full_text",
+  "quick_read": {
+    "tldr": "DenoisingGait 把 RGB 步态识别重新理解为“去噪”：先利用预训练扩散模型弱化衣服颜色、纹理等身份无关信息，再用特征匹配把高维特征压成静态和动态 Gait Feature Field。它在 CCPG、CASIA-B* 和 SUSTech1K 上取得很强的域内与跨域结果，说明生成模型的中间特征可以服务于判别式步态识别。",
+    "problem_and_motivation": "RGB 视频信息丰富，但也携带衣服纹理、颜色和背景等容易让模型走捷径的线索；轮廓和骨架能去掉这些干扰，却同时损失细节。论文要解决的是：能否在保留 RGB 丰富人体信息的同时，有选择地过滤与步态身份无关的视觉噪声。",
+    "core_method": "方法分两级去噪。第一步使用预训练 Stable Diffusion 的中间特征进行知识驱动去噪；第二步用几何驱动的 Feature Matching，在帧内和跨帧寻找局部相似关系，把多通道特征变成二维方向向量，形成静态与动态 Gait Feature Field，最后交给 GaitBase 完成身份识别。",
+    "key_results": "在 CCPG 的 Gait 协议下，DenoisingGait 平均 Rank-1 达到 89.5%，换装条件达到 84.0%；ReID 协议下平均达到 95.7%。论文还报告其在 CASIA-B*、SUSTech1K 以及跨域设置中多数情况下取得新的最好结果。消融表明扩散去噪、Feature Matching、背景去除和纹理抑制都具有实际贡献。",
+    "why_it_matters": "这项工作提供了一个值得继续研究的方向：不必在“信息丰富但噪声多的 RGB”和“干净但信息稀疏的轮廓”之间二选一，而可以把步态表示学习显式设计成逐级去除无关因素的过程。"
+  },
+  "detail": {
+    "motivation": "步态识别真正需要的是稳定的人体结构与运动模式，而 RGB 视频同时包含大量与身份步态无关的因素。衣服颜色、图案、背景和其他外观细节尤其容易让模型在训练集内获得高分，却在换装或跨数据集时失效。传统轮廓、骨架方法属于较强的“硬去噪”，但输入稀疏，会一起丢掉有价值的细粒度人体信息。\n\n作者因此把 RGB 步态识别重新表述为去噪问题：先利用生成式扩散模型学到的人体与图像先验进行知识驱动去噪，再利用局部几何关系进一步压制残留纹理。核心目标不是生成图像，而是借用生成模型内部已经学到的结构知识，得到更接近步态本质的判别表示。",
+    "contributions": [
+      {"contribution": "提出 DenoisingGait，将 RGB 步态识别统一为知识驱动与几何驱动的两阶段去噪过程，并把生成式扩散模型的中间表示用于判别式步态识别。", "source": "Introduction, CVPR 2025 paper pp. 1–2"},
+      {"contribution": "设计 Feature Matching：通过帧内与跨帧的局部特征相似度，把高维扩散特征压缩为二维方向向量，分别形成静态和动态 Gait Feature Field。", "source": "Sec. 3, Feature Matching; Eqs. 4–8; Fig. 2"},
+      {"contribution": "引入背景去除与纹理抑制，使几何匹配更集中于人体，并减少高纹理区域对身份预测的干扰。", "source": "Sec. 3, Eq. 9; Table 7"},
+      {"contribution": "在 CCPG、CASIA-B*、SUSTech1K 的域内和跨域实验中系统比较 RGB、灰度、轮廓、光流及其他步态表示，验证逐级去噪对换装鲁棒性和泛化的价值。", "source": "Sec. 4, Tables 1–7"}
+    ],
+    "research_questions": [{
+      "type": "inferred",
+      "question": "能否利用生成式扩散模型与几何特征匹配，从 RGB 行走视频中保留有用的人体结构和运动信息，同时过滤衣物纹理、颜色和背景等步态无关因素，从而提升换装与跨域步态识别？",
+      "original_question": null,
+      "how": "作者将扩散模型中间特征作为第一阶段去噪表示，再通过帧内/跨帧 Feature Matching 构建静态和动态 Gait Feature Field，并在 CCPG、CASIA-B*、SUSTech1K 上进行域内、跨域和组件消融实验。",
+      "answer": "实验支持这一目标。DenoisingGait 在 CCPG 的换装条件和平均结果上超过多种轮廓、RGB 与多模态基线，并在多数跨域设置中保持优势；去掉扩散去噪或 Feature Matching 后性能明显下降。",
+      "meaning": "结果说明生成模型的价值不只在生成数据。其内部特征可以作为一种人体先验，再经过针对步态任务的几何约束，转化为更抗外观变化的判别表示。",
+      "source": "Introduction, CVPR 2025 paper pp. 1–2"
+    }],
+    "research_questions_empty_reason": null,
+    "research_questions_empty_source": null,
+    "method": "输入是 RGB 行走序列。首先，每帧经过 Stable Diffusion 1.5 的 VAE 编码器进入潜空间，随后送入预训练扩散 UNet，在固定 timestep 下提取中间特征。这里并不执行完整图像生成，而是利用扩散模型在不同噪声尺度上形成的视觉先验。作者发现 timestep 会控制保留细节的粒度：过小容易保留衣服纹理，过大又会损伤人体结构，因此需要在去噪与身份信息之间折中。\n\n第二阶段是 Feature Matching。作者先借助人体轮廓去除背景，再对局部扩散特征做相似度匹配。帧内匹配描述局部外观结构，跨帧匹配描述随时间变化的运动关系。高维特征最终被压缩成二维方向向量，得到类似光流场的静态和动态 Gait Feature Field。静态场更偏向身体形状与局部结构，动态场强调肢体运动。\n\n为进一步抑制衣服纹理，作者根据静态方向向量的幅值识别纹理较强区域，并在训练时随机置零，迫使模型减少对纹理捷径的依赖。静态场和动态场分别输入 GaitBase 分支，再进行高层特征融合，使用步态识别常用的分类与度量学习目标训练。",
+    "experiments_and_key_findings": "实验覆盖 CCPG、CASIA-B* 和 SUSTech1K，并同时关注域内识别与跨域泛化。CCPG 是最关键的换装测试：在 Gait 协议下，DenoisingGait 的换装 Rank-1 为 84.0%，平均 Rank-1 为 89.5%；在 ReID 协议下平均达到 95.7%。这些结果高于论文比较的多种轮廓、RGB 和多模态方法，优势在外观变化较强的条件下尤其明显。\n\n消融说明性能并非仅来自更大的视觉模型。扩散模型的 timestep 存在明确最优区间；在 CCPG 上，合适的扩散去噪相对仅使用 VAE/RGB 表示带来明显提升。Feature Matching 是另一关键组件：将扩散特征进一步转成方向场后，静态结构和动态运动都得到更稳定的表达。Table 7 还显示背景去除不可缺少，而纹理抑制在换装条件下带来约 3 个百分点的额外提升。\n\n论文的跨域实验进一步表明，经过扩散先验和几何匹配得到的表示比直接 RGB 特征更容易迁移。不过 SUSTech1K 夜间等低质量条件仍暴露出对输入质量和轮廓辅助的依赖，这说明“去噪”并没有消除所有域偏移。",
+    "limitations": {
+      "author_reported": ["作者指出 RGB 步态方法仍受到训练数据中跨衣着样本比例的影响；现有数据集的换装覆盖有限，DenoisingGait 在补充实验中也存在这一问题。", "论文结果显示低质量成像条件仍是困难场景，尤其当用于背景去除的人体轮廓质量下降时，整个去噪链路会受到影响。"],
+      "ai_analysis": ["方法依赖 Stable Diffusion 1.5 的 VAE/UNet 特征，计算和显存成本明显高于纯轮廓基线；论文的精度优势需要与实际部署吞吐量、延迟和能耗一起评估。", "背景去除仍使用人体轮廓，这意味着 DenoisingGait 并非完全摆脱上游分割误差。跨摄像头、夜间和严重遮挡时，轮廓错误可能同时破坏静态与动态 Feature Field。", "固定 timestep 在不同数据域、衣着复杂度和图像质量下未必都是最佳选择。可以进一步研究按序列质量自适应选择扩散层级或噪声尺度。"]
+    },
+    "relation_to_research": "该论文与当前 Research Profile 的步态识别主线直接相关，而且提供了一个很适合做后续对比的“表示去噪”视角。与 Gait-X 的频率分解、GaitLLM/词汇引导方法相比，DenoisingGait 从生成模型先验和局部几何关系出发处理外观噪声，可以形成互补的研究轴：输入模态、先验来源、去噪机制与跨域泛化。\n\n实验设计也值得复用。尤其是 CCPG 换装条件、跨数据集评测，以及将 RGB、灰度、轮廓、光流和扩散特征放在同一框架中比较，有助于判断性能提升究竟来自更多信息还是更好的不变性。",
+    "what_can_be_done_next": [
+      {"title": "自适应扩散尺度", "rationale": "论文表明 timestep 决定纹理去除与结构保留的平衡，但当前主要使用固定设置。", "concrete_plan": "训练一个轻量质量估计器，根据衣着纹理强度、轮廓完整度和亮度为每个序列选择 timestep，或融合多个扩散层级的 Feature Field。", "validation": "在 CCPG 各换装子集、SUSTech1K 正常/夜间条件及跨域测试中，与固定 timestep 比较 Rank-1、mAP、计算量和选择分布。", "expected_value": "验证扩散去噪是否可以随输入难度动态调节，并减少固定超参数造成的域依赖。", "source": "Sec. 3 diffusion denoising; timestep ablation"},
+      {"title": "去除轮廓依赖", "rationale": "Feature Matching 的背景去除依赖人体轮廓，低质量分割可能成为新的瓶颈。", "concrete_plan": "用扩散特征自身的前景注意力、人体解析软掩码或无监督运动显著性替代硬轮廓，并保留原始轮廓版本作为对照。", "validation": "人为加入轮廓缺失、边界偏移和遮挡噪声，测试不同前景机制在 CCPG、SUSTech1K 夜间和跨域条件下的鲁棒性。", "expected_value": "判断方法的泛化优势究竟来自扩散先验还是高质量轮廓，并提升真实场景容错性。", "source": "Sec. 3 background removal; Table 7"},
+      {"title": "与频率去噪联合", "rationale": "DenoisingGait 从生成先验和几何匹配去除纹理，Gait-X 类方法从频率角度控制域相关信息，两者处理噪声的机制不同。", "concrete_plan": "在 Gait Feature Field 前后加入可控频率分解，分别限制静态场中的高频纹理与动态场中的噪声运动，并设计不增加身份泄漏的融合策略。", "validation": "在 CCPG 与跨数据集协议上比较 DenoisingGait、频率方法和联合模型，并做频带与静/动态分支消融。", "expected_value": "检验生成先验与频率约束是否互补，为跨衣着和跨域步态表示提供更明确的去噪机制。", "source": "Introduction; Feature Matching design; cross-domain experiments"},
+      {"title": "效率与轻量蒸馏", "rationale": "预训练扩散 UNet 提供强先验，但推理成本可能限制大规模检索。", "concrete_plan": "离线用 DenoisingGait 生成 Gait Feature Field 作为教师信号，训练轻量学生网络直接从 RGB 或轮廓预测静态/动态方向场。", "validation": "同时报告 Rank-1/mAP、参数量、FLOPs、单序列延迟和显存，并在跨域条件比较教师与学生的性能保持率。", "expected_value": "保留扩散去噪带来的泛化收益，同时把部署成本降到常规步态模型可接受范围。", "source": "Sec. 3 overall pipeline"}
+    ]
+  },
+  "original_abstract": "To capture individual gait patterns, excluding identity-irrelevant cues in walking videos, such as clothing texture and color, remains a persistent challenge for vision-based gait recognition. Traditional silhouette and pose-based methods, though theoretically effective at removing such distractions, often fall short of high accuracy due to their sparse and less informative inputs. To address this, emerging end-to-end methods focus on directly denoising RGB videos using global optimization and human-defined priors. Building on this trend, we propose a novel gait denoising method, DenoisingGait. Inspired by the philosophy that what I cannot create, I do not understand, we turn to generative diffusion models, uncovering how these models can partially filter out irrelevant factors for improved gait understanding. Additionally, we introduce a geometry-driven Feature Matching module, which, combined with background removal via human silhouettes, condenses the multi-channel diffusion features at each foreground pixel into a two-channel direction vector. Specifically, the proposed within- and cross-frame matching respectively capture the local vectorized structures of gait appearance and motion, producing a novel flow-like gait representation termed Gait Feature Field, which further reduces residual noise in diffusion features. Experiments on the CCPG, CASIA-B*, and SUSTech1K datasets demonstrate that DenoisingGait achieves a new SoTA performance in most cases for both within- and cross-domain evaluations.",
+  "bibtex": "@InProceedings{Jin_2025_CVPR,\n  author = {Jin, Dongyang and Fan, Chao and Ma, Jingzhe and Zhou, Jingkai and Chen, Weihua and Yu, Shiqi},\n  title = {On Denoising Walking Videos for Gait Recognition},\n  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},\n  month = {June},\n  year = {2025},\n  pages = {12347-12357}\n}",
+  "figures": [],
+  "evidence": [
+    {"claim": "DenoisingGait combines diffusion-based knowledge-driven denoising with geometry-driven Feature Matching.", "locator": "Introduction and Sec. 3", "url": "https://openaccess.thecvf.com/content/CVPR2025/html/Jin_On_Denoising_Walking_Videos_for_Gait_Recognition_CVPR_2025_paper.html"},
+    {"claim": "Experiments cover CCPG, CASIA-B*, SUSTech1K and include within-domain and cross-domain evaluation.", "locator": "Sec. 4, Tables 1–7", "url": "https://arxiv.org/abs/2505.18582"}
+  ],
+  "generated_by": "ChatGPT Daily Research Agent",
+  "generated_at": "2026-09-21T00:00:00Z",
+  "updated_at": "2026-09-21T00:00:00Z",
+  "owner_edited": false
+}
