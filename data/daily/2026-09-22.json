@@ -1,0 +1,10 @@
+{
+  "date": "2026-09-22",
+  "recommendations": [
+    {
+      "paper_id": "ms2gait-a-multi-scale-spatio-temporal-fusion-network-for-lidar-based-gait-recognition",
+      "primary": true,
+      "run_type": "scheduled"
+    }
+  ]
+}
