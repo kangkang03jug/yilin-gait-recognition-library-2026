@@ -1,0 +1,66 @@
+{
+  "id": "gait-recognition-via-collaborating-discriminative-and-generative-diffusion-models",
+  "title": "Gait Recognition via Collaborating Discriminative and Generative Diffusion Models",
+  "authors": ["Haijun Xiong", "Bin Feng", "Bang Wang", "Xinggang Wang", "Wenyu Liu"],
+  "year": 2026,
+  "publication_date": "2026-03-14",
+  "venue_or_source": "AAAI 2026",
+  "venue_type": "Conference",
+  "ranking": {"ccf": null, "cas": null, "jcr": null, "ranking_year": null, "ranking_source": null},
+  "identifiers": {"doi": "10.1609/aaai.v40i13.38096", "arxiv": "2511.06245", "openreview": null},
+  "urls": {"paper": "https://ojs.aaai.org/index.php/AAAI/article/view/38096", "code": null},
+  "topics": ["步态识别", "扩散模型", "生成式学习", "判别式学习", "条件控制", "鲁棒表征"],
+  "relevance": "High",
+  "reading_basis": "full_text",
+  "quick_read": {
+    "tldr": "CoD² 不再把扩散模型只当作去噪工具，而是让生成模型与步态判别模型协同训练。判别器提供身份语义，扩散模型结合身份语义和原序列的局部视觉信息生成新步态序列，生成结果再反过来训练判别器。该方法在四个步态基准上稳定提升多种主干网络，并且扩散模块只在训练阶段使用，不增加测试开销。",
+    "problem_and_motivation": "现有步态识别主要依赖判别模型直接学习身份差异，在换衣、视角、遮挡、携物和低质量轮廓下仍容易失效。已有 DenoisingGait 使用扩散模型清理 RGB 步态，但生成模型仍是辅助角色。作者认为，判别模型擅长身份语义，生成模型擅长数据分布，两者应形成双向协作。",
+    "core_method": "CoD² 用共享参数的判别提取器和轻量扩散模块联合训练。高层条件来自判别器提取的身份特征，低层条件来自原序列连续采样的若干帧。扩散模型据此生成身份一致的新序列，新序列再次送入判别器并用身份损失监督，从而同时改善生成质量和判别表征。",
+    "key_results": "以 DeepGaitV2 为主干时，CoD² 在 SUSTech1K、CCPG、GREW、Gait3D 的 Rank-1 分别达到 83.8%、84.8%、81.2%、78.3%。相对原 DeepGaitV2 分别提升 6.4、1.5、3.5、3.9 个百分点；SUSTech1K 夜间条件提升 11.3 个百分点。",
+    "why_it_matters": "这篇论文的价值不只是再加一个扩散模块，而是证明生成模型可以作为训练期的步态分布建模器，持续给判别器提供新的动态学习信号。它对当前步态识别研究尤其有参考价值：可以直接比较生成式增强是否真正改善跨条件鲁棒性，而不牺牲部署阶段的推理效率。"
+  },
+  "detail": {
+    "motivation": "步态识别依靠远距离、非接触的行走模式进行身份识别，但真实场景中的衣着变化、视角变化、遮挡、携物和低照度会显著改变观测到的轮廓。传统判别式模型主要优化不同身份之间的可分性，因此容易围绕训练数据中最直接的判别线索建立表示，对复杂分布变化的建模仍有限。\n\n扩散模型擅长学习复杂数据分布和时序结构。已有工作已经把它用于步态视频去噪，但作者指出，这类方法没有充分利用生成模型与判别模型之间的互补关系：判别模型拥有身份语义，生成模型拥有分布建模能力。如果判别特征能约束生成过程，而生成的新序列又反过来参与身份学习，两者可能形成比单向辅助更强的训练闭环。\n\n因此，论文提出 CoD²，目标是在不改变测试流程的前提下，把扩散生成引入训练过程，让身份语义、外观与运动细节共同约束生成，并用生成序列继续强化判别器。",
+    "contributions": [
+      {"contribution": "提出 CoD²，将判别式步态特征学习与生成式扩散分布建模放入同一个协同训练框架，使判别特征指导生成、生成序列反向强化判别学习。", "source": "Introduction, pp. 11169–11170; Fig. 1"},
+      {"contribution": "提出多层条件控制：高层条件使用身份感知特征，低层条件保留原始序列中的连续视觉帧，使生成序列同时保持身份一致性以及外观和运动细节。", "source": "Methodology, Multi-level Conditional Control, pp. 11171–11172; Figs. 2–3"},
+      {"contribution": "设计基于正弦相位调制的高层控制模块，将身份特征以空间自适应方式注入扩散过程，并通过消融证明优于简单逐元素相加。", "source": "Methodology, High-level conditional control, p. 11172; Table 7"},
+      {"contribution": "在 SUSTech1K、CCPG、GREW、Gait3D 上验证方法，并接入 GaitSet、GaitGL、GaitBase、DeepGaitV2 四种判别主干，所有组合均获得 Rank-1 提升。", "source": "Experiments, Tables 1, 3–5, pp. 11173–11174"}
+    ],
+    "research_questions": [
+      {"type": "inferred", "question": "生成式扩散模型与判别式步态模型能否通过双向协作，而不是单向辅助，学习对复杂条件变化更鲁棒的身份表征？", "original_question": null, "how": "作者构建 CoD²：判别器输出身份语义控制扩散生成，原序列连续帧提供低层视觉条件，生成序列再经过共享判别器并接受身份监督；随后在四个数据集和四种主干上比较基线与加入 CoD² 后的 Rank-1。", "answer": "实验支持这一目标。CoD² 在四个数据集上均提高 DeepGaitV2，并且对 GaitSet、GaitGL、GaitBase 也持续有效；低层和高层条件单独使用均有增益，联合使用最好。", "meaning": "生成模型在步态识别中不必只承担数据清理或离线增强。把身份语义直接反馈到生成过程，再让生成样本参与身份学习，可以形成训练期的闭环增强。", "source": "Introduction, pp. 11169–11170, paragraphs motivating integration of discriminative and generative models"}
+    ],
+    "research_questions_empty_reason": null,
+    "research_questions_empty_source": null,
+    "method": "输入是长度为 T 的步态轮廓序列。第一条判别路径使用现有步态主干 D 提取身份特征 fI，并用 Triplet Loss 与 Cross-Entropy Loss 监督。D 可以直接替换为 GaitSet、GaitGL、GaitBase 或 DeepGaitV2，因此 CoD² 更像训练框架，而不是固定主干。\n\n扩散路径同时接收两类条件。低层条件从原序列随机截取 m 个连续帧，其余位置由高斯噪声构成。连续帧在去噪过程中保持无噪，向生成部分传递外观与运动线索。高层条件则来自 fI。作者没有直接使用 ControlNet 式逐元素相加，而是根据身份特征生成空间变化的相位特征，再通过正弦、余弦调制和可学习通道缩放向量把身份语义注入扩散中。\n\n扩散模块输出新步态序列后，再送入与第一条路径共享参数的判别器，得到新的身份特征，并再次使用 Triplet 与 Cross-Entropy 监督身份一致性。最终联合优化真实序列与生成序列对应的损失。扩散模块只在训练时存在；测试阶段只保留原判别器，因此不增加推理计算。",
+    "experiments_and_key_findings": "作者在 SUSTech1K、CCPG、GREW 和 Gait3D 四个数据集上评测，主要指标为 Rank-k 和 mAP。训练统一使用 64×44 轮廓，固定采样 30 帧，并以 DeepGaitV2 为主要判别主干。\n\n主结果显示，CoD² 在 SUSTech1K 的总体 Rank-1 为 83.8%，其中夜间条件为 38.6%，比 DeepGaitV2 的 27.3% 高 11.3 个百分点。CCPG 的四种换衣条件平均 Rank-1 为 84.8%。GREW 达到 81.2% Rank-1，Gait3D 达到 78.3% Rank-1 和 71.2% mAP。相对 DeepGaitV2，四个数据集的 Rank-1 分别提升 6.4、1.5、3.5、3.9 个百分点。\n\n可插拔实验更能说明框架作用。CoD² 接入 GaitSet、GaitGL、GaitBase、DeepGaitV2 后，在四个数据集全部获得提升，其中 GaitBase 在 GREW 上从 60.1% 提升到 71.1%。作者观察到，不显式建模时间的 GaitSet 和 GaitBase 往往收益更大，说明扩散模块提供的时序动态可能补充了原主干缺失的信息。\n\n消融表明高层身份条件和低层视觉条件各自都能提升基线，二者联合时四个数据集表现最好。高层控制模块也优于简单相加。连续参考帧数量 m 在 5 左右取得较均衡结果：太少时低层信息不足，太多时扩散模型需要学习的新内容减少。",
+    "limitations": {
+      "author_reported": [],
+      "ai_analysis": [
+        "论文正文没有单独的 Limitations 小节。现有实验集中在四个轮廓步态基准，因此生成—判别协作是否同样适用于骨架、LiDAR、事件流或多模态输入仍需验证。",
+        "扩散模块虽然不增加测试开销，但会增加训练流程和显存需求。论文强调训练开销增加较小，但在更大主干、更长序列和更大数据集上的训练成本扩展规律仍值得系统测量。",
+        "生成序列由原序列连续帧和身份特征共同约束，因此性能提升可能同时来自时序补全、数据增强和身份一致性监督。现有消融能验证条件模块有效，但还不能完全分离这三类机制各自的贡献。",
+        "SUSTech1K 夜间结果提升明显，但绝对 Rank-1 仍只有 38.6%，说明低质量轮廓仍是重要瓶颈；生成模型无法完全补回输入分割阶段已经丢失的信息。"
+      ]
+    },
+    "relation_to_research": "该论文与当前步态识别 Research Profile 高度相关，并且与库中已经收录的 DenoisingGait 形成直接的技术演进关系。DenoisingGait 更强调用扩散模型去除 RGB 行走视频中的外观噪声，CoD² 则进一步把生成模型变成训练期的协作者。两篇论文适合放在一起比较：前者回答“生成模型能否清理输入”，后者回答“生成分布建模能否反过来改善判别表示”。\n\n对于跨域评测，CoD² 的四数据集一致增益和夜间条件结果值得作为生成式步态学习基线。尤其可以继续检验：这种收益究竟来自生成模型学习了更好的运动分布，还是主要来自额外的身份监督与数据增强。",
+    "what_can_be_done_next": [
+      {"title": "与 DenoisingGait 做同协议机制对比", "rationale": "两篇工作都使用扩散模型，但一个侧重去噪，一个侧重生成—判别协作，直接对比可以判断扩散模型在步态任务中的主要价值来自哪里。", "concrete_plan": "在相同 RGB/轮廓输入、相同 DeepGaitV2 主干和相同训练预算下复现 DenoisingGait、CoD² 以及两者组合，固定数据划分与采样策略。", "validation": "在 CCPG、SUSTech1K、Gait3D 上比较 Rank-1、mAP、训练成本，并按换衣、夜间、遮挡等条件拆分结果。", "expected_value": "把“输入去噪”和“生成式训练增强”两种机制分离，为后续扩散步态模型选择更有效的设计方向。", "source": "Introduction, comparison with DenoisingGait; Fig. 1"},
+      {"title": "验证跨数据集泛化而非只看域内提升", "rationale": "CoD² 在四个数据集都有效，但论文主要按各数据集官方协议独立训练和测试，尚不能直接说明生成分布建模提高了跨域能力。", "concrete_plan": "在一个大规模数据集训练判别主干与 CoD²，然后冻结或少量微调，在未见过的 Gait3D、GREW、CCPG 等目标域测试。", "validation": "报告源域与目标域 Rank-1/mAP，并与不使用扩散模块的同主干、普通数据增强和 DenoisingGait 比较。", "expected_value": "判断生成—判别协作是否真正学习到可迁移的步态运动规律，而不是只提高域内拟合。", "source": "Experiments, Tables 3–5"},
+      {"title": "把条件控制扩展到多模态步态", "rationale": "当前高层条件已经是抽象身份语义，理论上可以跨越轮廓输入；库中 LiDAR、事件流和多模态工作提供了直接测试场景。", "concrete_plan": "保留身份条件接口，将低层条件分别替换为 LiDAR 局部点云、事件片段或 RGB/轮廓同步片段，研究共享扩散潜空间或模态专属生成头。", "validation": "在同模态识别和跨模态检索中分别比较无生成模块、单模态 CoD² 与多模态条件版本，并检查模态缺失时的鲁棒性。", "expected_value": "验证 CoD² 是否能从轮廓专用训练框架扩展为跨传感器的生成式步态表征框架。", "source": "Methodology, Multi-level Conditional Control"},
+      {"title": "拆解生成收益的真正来源", "rationale": "当前生成序列同时带来时序补全、新样本和额外身份损失，三者作用存在耦合。", "concrete_plan": "设计控制实验：用非扩散时序插值替代生成、只生成但停止梯度回传、只增加同数量原始增强样本、以及去掉生成序列身份损失。", "validation": "在四个原始基准上比较 Rank-1、特征类间距、类内方差和生成序列的身份一致性，并统计不同主干的增益。", "expected_value": "明确 CoD² 的关键因果机制，避免把普通数据增强收益误归因于扩散分布建模。", "source": "Ablation Studies, Tables 5–8"}
+    ]
+  },
+  "original_abstract": "Gait recognition offers a non-intrusive biometric solution by identifying individuals through their walking patterns. Although discriminative models have achieved notable success in this domain, the full potential of generative models remains largely underexplored. In this paper, we introduce CoD², a novel framework that combines the data distribution modeling capabilities of diffusion models with the semantic representation learning strengths of discriminative models to extract robust gait features. We propose a Multi-level Conditional Control strategy that integrates both high-level identity-aware semantic conditions and low-level visual details. Specifically, the high-level condition, extracted by the discriminative extractor, guides the generation of identity-consistent gait sequences, while low-level visual details, such as appearance and motion, are preserved to enhance consistency. Moreover, the generated sequences facilitate the discriminative extractor's learning, enabling it to capture more comprehensive high-level semantic features. Extensive experiments on four datasets (SUSTech1K, CCPG, GREW, and Gait3D) demonstrate that CoD² achieves state-of-the-art performance and can be seamlessly integrated with existing discriminative methods, yielding consistent improvements.",
+  "bibtex": "@article{xiong2026gait, title={Gait Recognition via Collaborating Discriminative and Generative Diffusion Models}, author={Xiong, Haijun and Feng, Bin and Wang, Bang and Wang, Xinggang and Liu, Wenyu}, journal={Proceedings of the AAAI Conference on Artificial Intelligence}, volume={40}, number={13}, pages={11169--11177}, year={2026}, doi={10.1609/aaai.v40i13.38096}}",
+  "figures": [],
+  "evidence": [
+    {"claim": "CoD² 在 SUSTech1K 的总体 Rank-1 为 83.8%，夜间条件为 38.6%。", "locator": "Table 1, p. 11173", "url": "https://ojs.aaai.org/index.php/AAAI/article/view/38096/42058"},
+    {"claim": "CoD² 在 CCPG 平均 Rank-1 为 84.8%，GREW 为 81.2%，Gait3D 为 78.3%。", "locator": "Tables 3–4, p. 11174", "url": "https://ojs.aaai.org/index.php/AAAI/article/view/38096/42058"},
+    {"claim": "CoD² 接入四种判别主干后在四个数据集上均提高 Rank-1。", "locator": "Table 5, p. 11174", "url": "https://ojs.aaai.org/index.php/AAAI/article/view/38096/42058"}
+  ],
+  "generated_by": "ChatGPT Daily Research Agent",
+  "generated_at": "2026-09-24T00:01:31Z",
+  "updated_at": "2026-09-24T00:01:31Z",
+  "owner_edited": false
+}

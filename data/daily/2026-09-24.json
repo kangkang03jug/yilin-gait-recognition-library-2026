@@ -1,0 +1,10 @@
+{
+  "date": "2026-09-24",
+  "recommendations": [
+    {
+      "paper_id": "gait-recognition-via-collaborating-discriminative-and-generative-diffusion-models",
+      "primary": true,
+      "run_type": "scheduled"
+    }
+  ]
+}
